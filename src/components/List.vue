@@ -1,38 +1,19 @@
 <template>
   <div class="checklists">
     <router-link
-      :to="{ path: checklistPath, query: { id: 'list1' } }"
+      v-for="checklist in checklists"
+      :key="checklist.id"
+      :to="{ path: checklistPath, query: { id: checklist.id } }"
       class="checklist"
     >
-      List 1
-      <div class="icon"><Icon :name="'arrow'" /></div>
-    </router-link>
-    <router-link
-      :to="{ path: checklistPath, query: { id: 'list2' } }"
-      class="checklist"
-    >
-      List 2
-      <div class="icon"><Icon :name="'arrow'" /></div>
-    </router-link>
-    <router-link
-      :to="{ path: checklistPath, query: { id: 'list3' } }"
-      class="checklist"
-    >
-      List 3
-      <div class="icon"><Icon :name="'arrow'" /></div>
-    </router-link>
-    <router-link
-      :to="{ path: checklistPath, query: { id: 'list4' } }"
-      class="checklist"
-    >
-      List 4
+      {{ checklist.name }}
       <div class="icon"><Icon :name="'arrow'" /></div>
     </router-link>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
@@ -41,8 +22,27 @@ export default defineComponent({
     Icon,
   },
   setup() {
+    const checklists = ref<any[]>([
+      {
+        id: 0,
+        name: "List 1",
+        createdOn: Date.now(),
+      },
+      {
+        id: 1,
+        name: "List 2",
+        createdOn: Date.now(),
+      },
+      {
+        id: 2,
+        name: "List 3",
+        createdOn: Date.now(),
+      },
+    ]);
+
     return {
       checklistPath: "checklist",
+      checklists,
     };
   },
 });

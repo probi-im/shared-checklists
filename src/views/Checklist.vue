@@ -2,10 +2,10 @@
   <div class="checklist">
     <div class="header">
       <router-link to="home" class="icon"><Icon :name="'arrow'" /></router-link>
-      <h1 v-if="!contentLoaded">Loading checklist items...</h1>
-      <h1 v-else>This is an about page</h1>
+      <h1>List 1</h1>
     </div>
-    <div v-if="contentLoaded" class="list">
+    <h3 v-if="!contentLoaded">Loading checklist items...</h3>
+    <div v-else class="list">
       <div
         v-for="item in sortedItems"
         :key="item.id"
@@ -61,7 +61,6 @@ export default defineComponent({
 
     return {
       contentLoaded,
-      items,
       sortedItems,
     };
   },
@@ -97,6 +96,9 @@ export default defineComponent({
     margin-left: 20px;
     color: hsl(244, 69%, 37%);
   }
+}
+h3 {
+  margin-top: 25px;
 }
 .list {
   margin-top: 25px;

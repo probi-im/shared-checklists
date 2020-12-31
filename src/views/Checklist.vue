@@ -2,7 +2,8 @@
   <div class="checklist">
     <div class="header">
       <router-link to="home" class="icon"><Icon :name="'arrow'" /></router-link>
-      <h1>List 1</h1>
+      <h1 v-if="!contentLoaded || !checklist">Loading checklist items...</h1>
+      <h1 v-else>{{ checklist.name }}</h1>
     </div>
     <h3 v-if="!contentLoaded">Loading checklist items...</h3>
     <div v-else class="list">
@@ -27,6 +28,9 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import Icon from "@/components/Icon.vue";
+import { useStore } from "vuex";
+import { useRoute } from "vue-router";
+import * as fb from "../firebase";
 
 export default defineComponent({
   name: "Checklist",
@@ -34,27 +38,30 @@ export default defineComponent({
     Icon,
   },
   setup() {
+    const store = useStore();
+    const route = useRoute();
+
     const contentLoaded = ref(false);
-    const items = ref<any[]>([
-      {
-        id: 0,
-        text: "First item",
-        done: false,
-      },
-      {
-        id: 1,
-        text: "Second item",
-        done: true,
-      },
-      {
-        id: 2,
-        text: "Third item",
-        done: false,
-      },
-    ]);
+    const checklist = ref<any>({});
+    const items = ref<any[]>([]);
+
+    fb.checklistsCollection
+      .doc(route.query.id as string)
+      .collection("items")
+      .orderBy("createdOn", "desc")
+      .onSnapshot((snapshot) => {
+        let nItems = [];
+        for (const doc of snapshot.docs) {
+          let item = doc.data();
+          item.id = doc.id;
+          nItems.push(item);
+        }
+        items.value = nItems;
+        contentLoaded.value = true;
+      });
 
     const sortedItems = computed(() => {
-      return items.value.slice().sort((a, b) => {
+      return items.value.slice().sort((a: any, b: any) => {
         return a.done === b.done ? 0 : a.done ? 1 : -1;
       });
     });
@@ -62,12 +69,10 @@ export default defineComponent({
     return {
       contentLoaded,
       sortedItems,
+      checklist: computed(() =>
+        store.state.checklists.find((c: any) => c.id === route.query.id)
+      ),
     };
-  },
-  created() {
-    setTimeout(() => {
-      this.contentLoaded = true;
-    }, 2000);
   },
 });
 </script>
@@ -100,7 +105,7 @@ export default defineComponent({
 h3 {
   margin-top: 25px;
 }
-.list {
+.list:not(:empty) {
   margin-top: 25px;
 
   .item {

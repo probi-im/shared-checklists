@@ -13,8 +13,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import Icon from "@/components/Icon.vue";
+import { useStore } from "vuex";
 
 export default defineComponent({
   name: "List",
@@ -22,34 +23,18 @@ export default defineComponent({
     Icon,
   },
   setup() {
-    const checklists = ref<any[]>([
-      {
-        id: 0,
-        name: "List 1",
-        createdOn: Date.now(),
-      },
-      {
-        id: 1,
-        name: "List 2",
-        createdOn: Date.now(),
-      },
-      {
-        id: 2,
-        name: "List 3",
-        createdOn: Date.now(),
-      },
-    ]);
+    const store = useStore();
 
     return {
       checklistPath: "checklist",
-      checklists,
+      checklists: computed(() => store.state.checklists),
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-.checklists {
+.checklists:not(:empty) {
   margin-top: 25px;
 }
 .checklist {

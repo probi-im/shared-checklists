@@ -15,9 +15,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/checklist',
     name: 'Checklist',
     component: () => import(/* webpackChunkName: "checklist" */ '../views/Checklist.vue'),
-    props: {
-      listId: route => route.query.id
-    }
   }
 ]
 

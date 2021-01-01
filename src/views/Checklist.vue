@@ -2,11 +2,10 @@
   <div class="checklist">
     <div class="header">
       <router-link to="home" class="icon"><Icon :name="'arrow'" /></router-link>
-      <h1 v-if="!contentLoaded || !checklist">Loading checklist items...</h1>
+      <h1 v-if="!checklist">Loading checklist...</h1>
       <h1 v-else>{{ checklist.name }}</h1>
     </div>
-    <h3 v-if="!contentLoaded">Loading checklist items...</h3>
-    <div v-else class="list">
+    <div v-if="checklist" class="list">
       <div
         v-for="item in sortedItems"
         :key="item.id"
@@ -41,27 +40,30 @@ export default defineComponent({
     const store = useStore();
     const route = useRoute();
 
-    const contentLoaded = ref(false);
-    const checklist = ref<any>({});
-    const items = ref<any[]>([]);
+    const contentLoaded = ref(true);
+    // const items = ref<any[]>([]);
 
-    fb.checklistsCollection
-      .doc(route.query.id as string)
-      .collection("items")
-      .orderBy("createdOn", "desc")
-      .onSnapshot((snapshot) => {
-        let nItems = [];
-        for (const doc of snapshot.docs) {
-          let item = doc.data();
-          item.id = doc.id;
-          nItems.push(item);
-        }
-        items.value = nItems;
-        contentLoaded.value = true;
-      });
+    // fb.checklistsCollection
+    //   .doc(route.query.id as string)
+    //   .collection("items")
+    //   .orderBy("createdOn", "desc")
+    //   .onSnapshot((snapshot) => {
+    //     let nItems = [];
+    //     for (const doc of snapshot.docs) {
+    //       let item = doc.data();
+    //       item.id = doc.id;
+    //       nItems.push(item);
+    //     }
+    //     items.value = nItems;
+    //     contentLoaded.value = true;
+    //   });
+
+    const checklist = computed(() =>
+      store.state.checklists.find((c: any) => c.id === route.query.id)
+    );
 
     const sortedItems = computed(() => {
-      return items.value.slice().sort((a: any, b: any) => {
+      return checklist.value.items.slice().sort((a: any, b: any) => {
         return a.done === b.done ? 0 : a.done ? 1 : -1;
       });
     });
@@ -69,9 +71,7 @@ export default defineComponent({
     return {
       contentLoaded,
       sortedItems,
-      checklist: computed(() =>
-        store.state.checklists.find((c: any) => c.id === route.query.id)
-      ),
+      checklist,
     };
   },
 });

@@ -30,4 +30,9 @@ body {
   box-shadow: 0 10px 30px #333;
   min-width: 700px;
 }
+.header {
+  color: hsl(244, 69%, 37%);
+  display: flex;
+  align-items: center;
+}
 </style>

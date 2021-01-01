@@ -2,68 +2,125 @@
   <div class="home">
     <div class="header">
       <h1>Shared Checklist</h1>
-      <button @click="logout"><span>Logout</span></button>
+      <button class="custom-button icon" @click="showAddListDialog">
+        <Icon :name="'plus'" />
+      </button>
+      <button class="custom-button icon" @click="showCreateNewListDialog">
+        <Icon :name="'edit'" />
+      </button>
+      <button @click="logout" class="custom-button"><span>Logout</span></button>
     </div>
 
     <List />
+
+    <Dialog
+      v-if="displayAddListDialog"
+      title="Add an existing Shared Checklist"
+      :confirmButton="{ text: 'Add', display: true }"
+      :exitButton="{ text: 'Cancel', display: true }"
+      v-on:confirm="addListDialogConfirmHandler"
+      v-on:exit="addListDialogExitHandler"
+    >
+      <input
+        class="custom-input"
+        type="text"
+        name="createNewListName"
+        id="createNewListName"
+        placeholder="Checklist ID"
+      />
+    </Dialog>
+
+    <Dialog
+      v-if="displayCreateNewListDialog"
+      title="Create a new Shared Checklist"
+      :confirmButton="{ text: 'Create', display: true }"
+      :exitButton="{ text: 'Cancel', display: true }"
+      v-on:confirm="createNewListDialogConfirmHandler"
+      v-on:exit="createNewListDialogExitHandler"
+    >
+      <input
+        class="custom-input"
+        type="text"
+        name="createNewListName"
+        id="createNewListName"
+        placeholder="Name ('Shopping', 'Tonight's party', ...)"
+      />
+    </Dialog>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import List from "@/components/List.vue";
 import { useStore } from "vuex";
+import Icon from "@/components/Icon.vue";
+import Dialog from "@/components/Dialog.vue";
 
 export default defineComponent({
   name: "Home",
   components: {
+    Dialog,
+    Icon,
     List,
   },
   setup() {
     const store = useStore();
+    const displayCreateNewListDialog = ref(false);
+    const displayAddListDialog = ref(false);
 
     const logout = () => {
       store.dispatch("logout");
     };
 
+    const showAddListDialog = () => {
+      displayAddListDialog.value = true;
+    };
+
+    const addListDialogConfirmHandler = () => {
+      displayAddListDialog.value = false;
+    };
+
+    const addListDialogExitHandler = () => {
+      displayAddListDialog.value = false;
+    };
+
+    const showCreateNewListDialog = () => {
+      displayCreateNewListDialog.value = true;
+    };
+
+    const createNewListDialogConfirmHandler = () => {
+      displayCreateNewListDialog.value = false;
+    };
+
+    const createNewListDialogExitHandler = () => {
+      displayCreateNewListDialog.value = false;
+    };
+
     return {
+      addListDialogConfirmHandler,
+      addListDialogExitHandler,
+      createNewListDialogConfirmHandler,
+      createNewListDialogExitHandler,
+      displayAddListDialog,
+      displayCreateNewListDialog,
       logout,
+      showAddListDialog,
+      showCreateNewListDialog,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-.header button {
-  margin-left: auto;
-  padding: 10px 15px;
-  font-size: 1.3rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  width: auto;
-  color: white;
-  border: 2px solid blueviolet;
-  border-radius: 10px;
-  cursor: pointer;
-  outline: none;
-  background-color: transparent;
-
-  span {
-    background: linear-gradient(
-      -45deg,
-      hsl(283, 90%, 67%),
-      hsl(236, 100%, 65%)
-    );
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+.header {
+  button {
+    margin-left: 20px;
   }
-
-  &:hover {
-    background: linear-gradient(
-      -45deg,
-      hsla(283, 90%, 67%, 0.15),
-      hsl(236, 100%, 65%, 0.15)
-    );
+  button:first-of-type {
+    margin-left: auto;
+  }
+  svg {
+    fill: darkorchid;
   }
 }
 </style>

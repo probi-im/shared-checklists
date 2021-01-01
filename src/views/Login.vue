@@ -18,7 +18,7 @@
         placeholder="Password"
         required
       />
-      <button type="submit">Login</button>
+      <button type="submit"><span>Login</span></button>
     </form>
   </div>
 </template>
@@ -83,18 +83,34 @@ form {
 
   button {
     padding: 10px 15px;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-transform: uppercase;
     width: auto;
-    background: linear-gradient(
-      -45deg,
-      hsl(283, 90%, 67%),
-      hsl(236, 100%, 65%)
-    );
     color: white;
     border: 2px solid blueviolet;
     border-radius: 10px;
     cursor: pointer;
     outline: none;
+    background-color: transparent;
+
+    span {
+      background: linear-gradient(
+        -45deg,
+        hsl(283, 90%, 67%),
+        hsl(236, 100%, 65%)
+      );
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    &:hover {
+      background: linear-gradient(
+        -45deg,
+        hsla(283, 90%, 67%, 0.15),
+        hsl(236, 100%, 65%, 0.15)
+      );
+    }
   }
 }
 </style>

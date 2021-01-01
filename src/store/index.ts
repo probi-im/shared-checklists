@@ -1,38 +1,19 @@
 import { createStore } from 'vuex'
 import * as fb from '../firebase';
 import router from '@/router';
-
-fb.checklistsCollection.orderBy('createdOn', 'desc').onSnapshot(async snapshot => {
-  let checklists: any[] = [];
-
-  for (const doc of snapshot.docs) {
-    let checklist = doc.data();
-    checklist.id = doc.id;
-    // const docs = (await fb.checklistsCollection.doc(doc.id).collection('items').orderBy('createdOn', 'desc').get()).docs;
-    // let items: any[] = [];
-    // if (docs.length) {
-    //   docs.forEach(doc => {
-    //     let item = doc.data();
-    //     item.id = doc.id;
-    //     items.push(item);
-    //   });
-    // }
-    // checklist.items = items;
-    checklists.push(checklist);
-  }
-
-  store.commit('setChecklists', checklists);
-})
+import firebase from 'firebase/app';
 
 export interface State {
   checklists: any[],
-  user: any
+  firebaseListenersInitiated: Boolean,
+  user: any,
 }
 
 const store = createStore<State>({
   state: {
     checklists: [],
-    user: {}
+    firebaseListenersInitiated: false,
+    user: null
   },
   mutations: {
     setChecklists(state, checklists) {
@@ -40,9 +21,42 @@ const store = createStore<State>({
     },
     setUserProfile(state, user) {
       state.user = user;
+    },
+    initializeFirebaseListeners(state) {
+      if (!state.user || !state.user.id) return;
+      fb.checklistsCollection.where('allowedUsers', 'array-contains', state.user.id ? state.user.id : 'invalid_userid').orderBy('createdOn', 'desc').onSnapshot(async snapshot => {
+        let checklists: any[] = [];
+      
+        for (const doc of snapshot.docs) {
+          let checklist = doc.data();
+          checklist.id = doc.id;
+          checklists.push(checklist);
+        }
+      
+        store.commit('setChecklists', checklists);
+      })
+      state.firebaseListenersInitiated = true;
     }
   },
   actions: {
+    async addChecklist({ state }, checklistId) {
+      try {
+        await fb.checklistsCollection.doc(checklistId).update({
+          allowedUsers: firebase.firestore.FieldValue.arrayUnion(state.user.id)
+        });
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    },
+    async createChecklist({}, checklist) {
+      try {
+        await fb.checklistsCollection.add(checklist);
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    },
     async login({ commit }, { email, password }) {
       try {
         const { user } = await fb.auth.signInWithEmailAndPassword(email, password);
@@ -53,6 +67,7 @@ const store = createStore<State>({
             displayName: user.displayName,
             photoUrl: user.photoURL
           });
+          commit('initializeFirebaseListeners');
           router.push('home');
         }
       } catch(e) {

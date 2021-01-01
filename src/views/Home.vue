@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="header">
-      <h1>Shared Checklist</h1>
+      <h1>Shared Checklists</h1>
       <button class="custom-button icon" @click="showAddListDialog">
         <Icon :name="'plus'" />
       </button>
@@ -22,6 +22,7 @@
       v-on:exit="addListDialogExitHandler"
     >
       <input
+        v-model="addListId"
         class="custom-input"
         type="text"
         name="createNewListName"
@@ -39,6 +40,7 @@
       v-on:exit="createNewListDialogExitHandler"
     >
       <input
+        v-model="newListName"
         class="custom-input"
         type="text"
         name="createNewListName"
@@ -65,38 +67,63 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    const displayCreateNewListDialog = ref(false);
+
+    // Adding existing Checklist variables and functions
+    const addListId = ref("");
     const displayAddListDialog = ref(false);
+    const showAddListDialog = () => {
+      displayAddListDialog.value = true;
+    };
+    const addListDialogConfirmHandler = () => {
+      store
+        .dispatch("addChecklist", addListId.value)
+        .then(() => {
+          displayAddListDialog.value = false;
+          addListId.value = "";
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    };
+    const addListDialogExitHandler = () => {
+      displayAddListDialog.value = false;
+      addListId.value = "";
+    };
+
+    // Creating new Checklist variables and functions
+    const newListName = ref("");
+    const displayCreateNewListDialog = ref(false);
+    const showCreateNewListDialog = () => {
+      displayCreateNewListDialog.value = true;
+    };
+    const createNewListDialogConfirmHandler = () => {
+      const checklistToCreate = {
+        name: newListName.value,
+        createdOn: new Date(),
+        items: [],
+        allowedUsers: store.state.user ? [store.state.user.id] : [],
+      };
+      store
+        .dispatch("createChecklist", checklistToCreate)
+        .then(() => {
+          displayCreateNewListDialog.value = false;
+          newListName.value = "";
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    };
+    const createNewListDialogExitHandler = () => {
+      displayCreateNewListDialog.value = false;
+      newListName.value = "";
+    };
 
     const logout = () => {
       store.dispatch("logout");
     };
 
-    const showAddListDialog = () => {
-      displayAddListDialog.value = true;
-    };
-
-    const addListDialogConfirmHandler = () => {
-      displayAddListDialog.value = false;
-    };
-
-    const addListDialogExitHandler = () => {
-      displayAddListDialog.value = false;
-    };
-
-    const showCreateNewListDialog = () => {
-      displayCreateNewListDialog.value = true;
-    };
-
-    const createNewListDialogConfirmHandler = () => {
-      displayCreateNewListDialog.value = false;
-    };
-
-    const createNewListDialogExitHandler = () => {
-      displayCreateNewListDialog.value = false;
-    };
-
     return {
+      addListId,
       addListDialogConfirmHandler,
       addListDialogExitHandler,
       createNewListDialogConfirmHandler,
@@ -104,6 +131,7 @@ export default defineComponent({
       displayAddListDialog,
       displayCreateNewListDialog,
       logout,
+      newListName,
       showAddListDialog,
       showCreateNewListDialog,
     };

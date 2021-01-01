@@ -6,8 +6,20 @@ import store from './store'
 
 let app: any;
 
-auth.onAuthStateChanged(() => {
+auth.onAuthStateChanged((user) => {
 if (!app) {
   app = createApp(App).use(store).use(router).mount('#app')
+
+  if (user) {
+    store.commit('setUserProfile', {
+      id: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoUrl: user.photoURL
+    });
+    store.commit('initializeFirebaseListeners');
+  } else {
+    store.commit('setUserProfile', null);
+  }
 }
 });

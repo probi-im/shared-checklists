@@ -57,9 +57,16 @@ export default defineComponent({
 
     const checklist = computed(() => {
       if (!deleting.value && !deleted.value) {
-        currentChecklistVersion = store.state.checklists.find(
+        const newChecklist = store.state.checklists.find(
           (c: any) => c.id === route.query.id
         );
+        if (!currentChecklistVersion) {
+          currentChecklistVersion = newChecklist;
+        } else if (currentChecklistVersion && !newChecklist) {
+          // checklist has been deleted by someone else
+          router.push("home");
+          return undefined;
+        }
       }
       return currentChecklistVersion;
     });

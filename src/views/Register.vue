@@ -1,7 +1,7 @@
 <template>
-  <div class="login">
-    <div class="header"><h1>Login</h1></div>
-    <form @submit.prevent="login">
+  <div class="register">
+    <div class="header"><h1>Register</h1></div>
+    <form @submit.prevent="register">
       <input
         v-model.trim="email"
         type="email"
@@ -18,9 +18,18 @@
         placeholder="Password"
         required
       />
-      <button type="submit"><span>Log in</span></button>
+      <input
+        v-model.trim="passwordConfirmation"
+        type="password"
+        name="passwordConfirmation"
+        id="passwordConfirmation"
+        placeholder="Password confirmation"
+        required
+      />
+      <button type="submit"><span>Register</span></button>
       <h3>
-        Need an account ? <router-link to="register">Register here</router-link>
+        Already have an account ?
+        <router-link to="login">Log in here</router-link>
       </h3>
     </form>
   </div>
@@ -38,10 +47,12 @@ export default defineComponent({
 
     const email = ref("");
     const password = ref("");
+    const passwordConfirmation = ref("");
 
-    const login = () => {
+    const register = () => {
+      if (password.value !== passwordConfirmation.value) return;
       try {
-        store.dispatch("login", {
+        store.dispatch("register", {
           email: email.value,
           password: password.value,
         });
@@ -53,7 +64,8 @@ export default defineComponent({
     return {
       email,
       password,
-      login,
+      passwordConfirmation,
+      register,
     };
   },
 });

@@ -138,6 +138,24 @@ const store = createStore<State>({
         throw e;
       }
     },
+    async register({ commit }, { email, password }) {
+      try {
+        const { user } = await fb.auth.createUserWithEmailAndPassword(email, password);
+        if (user) {
+          commit('setUserProfile', {
+            id: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoUrl: user.photoURL
+          });
+          commit('initializeFirebaseListeners');
+          router.push('home');
+        }
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    },
     async login({ commit }, { email, password }) {
       try {
         const { user } = await fb.auth.signInWithEmailAndPassword(email, password);

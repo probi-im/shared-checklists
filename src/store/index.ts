@@ -55,7 +55,7 @@ const store = createStore<State>({
   },
   actions: {
     async addChecklist({ state }, checklistId) {
-      if (!checklistId) return;
+      if (!state.user || !state.user.id || !checklistId) return;
       try {
         await fb.checklistsCollection.doc(checklistId).update({
           allowedUsers: firebase.firestore.FieldValue.arrayUnion(state.user.id)
@@ -84,6 +84,18 @@ const store = createStore<State>({
             allowedUsers: firebase.firestore.FieldValue.arrayRemove(state.user.id)
           });
         }
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    },
+    async addItemToChecklist({ state }, data: { item: Item, checklist: Checklist }) {
+      if (!state.user || !state.user.id || !data || !data.item || !data.item.id || !data.item.text || !data.checklist.id || !data.checklist.allowedUsers) return;
+      if (!data.checklist.allowedUsers.includes(state.user.id)) return;
+      try {
+        await fb.checklistsCollection.doc(data.checklist.id).update({
+          items: firebase.firestore.FieldValue.arrayUnion(data.item)
+        });
       } catch (e) {
         console.log(e);
         throw e;

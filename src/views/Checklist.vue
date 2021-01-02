@@ -7,6 +7,13 @@
       <button
         v-if="checklist && !deleting && !deleted"
         class="custom-button icon"
+        @click="showAddNewItemDialog"
+      >
+        <Icon :name="'plus'" />
+      </button>
+      <button
+        v-if="checklist && !deleting && !deleted"
+        class="custom-button icon"
         @click="deleteChecklist"
       >
         <Icon :name="'delete'" />
@@ -28,6 +35,24 @@
         <label :for="item.id">{{ item.text }}</label>
       </div>
     </div>
+
+    <Dialog
+      v-if="displayAddNewItemDialog"
+      title="Add a new item to the checklist"
+      :confirmButton="{ text: 'Add', display: true }"
+      :exitButton="{ text: 'Cancel', display: true }"
+      v-on:confirm="addNewItemDialogConfirmHandler"
+      v-on:exit="addNewItemDialogExitHandler"
+    >
+      <input
+        v-model="newItemText"
+        class="custom-input"
+        type="text"
+        name="addNewItemText"
+        id="addNewItemText"
+        placeholder="Text"
+      />
+    </Dialog>
   </div>
 </template>
 
@@ -39,10 +64,13 @@ import { useRoute } from "vue-router";
 import router from "@/router";
 import * as fb from "../firebase";
 import { Checklist, State } from "@/store";
+import Dialog from "@/components/Dialog.vue";
+import { v4 as uuid4 } from "uuid";
 
 export default defineComponent({
   name: "Checklist",
   components: {
+    Dialog,
     Icon,
   },
   setup() {
@@ -53,29 +81,62 @@ export default defineComponent({
     const deleting = ref(false);
     const deleted = ref(false);
 
-    let currentChecklistVersion: Checklist | undefined = undefined;
+    const currentChecklistVersion = ref<Checklist | undefined>(undefined);
 
     const checklist = computed(() => {
       if (!deleting.value && !deleted.value) {
         const newChecklist = store.state.checklists.find(
           (c: any) => c.id === route.query.id
         );
-        if (!currentChecklistVersion) {
-          currentChecklistVersion = newChecklist;
-        } else if (currentChecklistVersion && !newChecklist) {
+        if (currentChecklistVersion.value && !newChecklist) {
           // checklist has been deleted by someone else
           router.push("home");
           return undefined;
+        } else {
+          currentChecklistVersion.value = newChecklist;
         }
       }
-      return currentChecklistVersion;
+      return currentChecklistVersion.value;
     });
 
     const sortedItems = computed(() => {
-      return currentChecklistVersion?.items.slice().sort((a: any, b: any) => {
-        return a.done === b.done ? 0 : a.done ? 1 : -1;
-      });
+      return currentChecklistVersion.value?.items
+        .slice()
+        .sort((a: any, b: any) => {
+          return a.done === b.done ? 0 : a.done ? 1 : -1;
+        });
     });
+
+    // Adding new item variables and functions
+    const newItemText = ref("");
+    const displayAddNewItemDialog = ref(false);
+    const showAddNewItemDialog = () => {
+      displayAddNewItemDialog.value = true;
+    };
+    const addNewItemDialogConfirmHandler = () => {
+      const itemToAdd = {
+        id: uuid4(),
+        text: newItemText.value,
+        done: false,
+        createdOn: new Date(),
+      };
+      store
+        .dispatch("addItemToChecklist", {
+          item: itemToAdd,
+          checklist: checklist.value,
+        })
+        .then(() => {
+          displayAddNewItemDialog.value = false;
+          newItemText.value = "";
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    };
+    const addNewItemDialogExitHandler = () => {
+      displayAddNewItemDialog.value = false;
+      newItemText.value = "";
+    };
 
     const deleteChecklist = () => {
       if (deleting.value) return;
@@ -96,11 +157,16 @@ export default defineComponent({
     };
 
     return {
+      addNewItemDialogConfirmHandler,
+      addNewItemDialogExitHandler,
       checklist,
       contentLoaded,
       deleteChecklist,
       deleted,
       deleting,
+      displayAddNewItemDialog,
+      newItemText,
+      showAddNewItemDialog,
       sortedItems,
     };
   },
@@ -132,9 +198,15 @@ export default defineComponent({
     color: hsl(244, 69%, 37%);
   }
   button {
-    margin-left: auto;
+    margin-left: 20px;
     svg {
       fill: hsl(330, 85%, 44%);
+    }
+  }
+  button:first-of-type {
+    margin-left: auto;
+    svg {
+      fill: darkorchid;
     }
   }
 }

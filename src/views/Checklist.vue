@@ -29,6 +29,13 @@
       >
         <Icon :name="item.done ? 'checkbox_filled' : 'checkbox_empty'" />
         <label :for="item.id">{{ item.text }}</label>
+        <button
+          v-if="checklist && !deleting && !deleted"
+          class="custom-button icon"
+          @click.stop="deleteItem(item.id)"
+        >
+          <Icon :name="'delete'" />
+        </button>
       </div>
     </div>
 
@@ -146,6 +153,18 @@ export default defineComponent({
         });
     };
 
+    const deleteItem = (itemId: string) => {
+      store
+        .dispatch("deleteItem", {
+          itemId,
+          checklist: checklist.value,
+        })
+        .then(() => {})
+        .catch((e) => {
+          console.log(e);
+        });
+    };
+
     const deleteChecklist = () => {
       if (deleting.value) return;
       deleting.value = true;
@@ -172,6 +191,7 @@ export default defineComponent({
       deleteChecklist,
       deleted,
       deleting,
+      deleteItem,
       displayAddNewItemDialog,
       newItemText,
       showAddNewItemDialog,
@@ -250,6 +270,13 @@ h3 {
 
       label {
         color: lightgray;
+      }
+    }
+    button {
+      margin-left: 20px;
+      padding: 5px;
+      svg {
+        fill: hsl(330, 85%, 44%);
       }
     }
   }

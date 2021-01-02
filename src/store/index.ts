@@ -116,6 +116,20 @@ const store = createStore<State>({
         throw e;
       }
     },
+    async deleteItem({state}, data: { itemId: string, checklist: Checklist }) {
+      if (!state.user || !state.user.id || !data || !data.itemId || !data.checklist.id || !data.checklist.allowedUsers) return;
+      if (!data.checklist.allowedUsers.includes(state.user.id)) return;
+      try {
+        const item = data.checklist.items.find(i => i.id === data.itemId);
+        if (!item) return;
+        await fb.checklistsCollection.doc(data.checklist.id).update({
+          items: firebase.firestore.FieldValue.arrayRemove(item)
+        });
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    },
     async login({ commit }, { email, password }) {
       try {
         const { user } = await fb.auth.signInWithEmailAndPassword(email, password);

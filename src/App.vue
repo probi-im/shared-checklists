@@ -2,6 +2,18 @@
   <router-view />
 </template>
 
+<script lang="ts">
+import { defineComponent, ref } from "vue";
+import store from "@/store";
+
+export default defineComponent({
+  name: "App",
+  unmounted() {
+    store.commit("stopFirebaseListeners");
+  },
+});
+</script>
+
 <style lang="scss">
 *,
 *::before,
@@ -28,12 +40,17 @@ body {
   padding: 50px;
   border-radius: 30px;
   box-shadow: 0 10px 30px #333;
-  min-width: 700px;
+  width: 700px;
 }
 .header {
   color: hsl(244, 69%, 37%);
   display: flex;
   align-items: center;
+  .buttons {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+  }
 }
 button.custom-button {
   padding: 10px 15px;
@@ -106,6 +123,21 @@ input[type="text"].custom-input {
 
   &:focus {
     border-color: gray;
+  }
+}
+
+@media (max-width: 700px) {
+  #app {
+    width: 90vw;
+    padding: 25px;
+  }
+  .header {
+    flex-direction: column;
+    text-align: center;
+
+    .buttons {
+      margin-top: 15px;
+    }
   }
 }
 </style>

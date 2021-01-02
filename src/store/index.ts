@@ -22,13 +22,15 @@ export interface State {
   checklists: Checklist[],
   firebaseListenersInitiated: boolean,
   user: any,
+  collectionsListenerUnsubscribe: Function | null
 }
 
 const store = createStore<State>({
   state: {
     checklists: [],
     firebaseListenersInitiated: false,
-    user: null
+    user: null,
+    collectionsListenerUnsubscribe: null
   },
   mutations: {
     setChecklists(state, checklists: Checklist[]) {
@@ -39,7 +41,7 @@ const store = createStore<State>({
     },
     initializeFirebaseListeners(state) {
       if (!state.user || !state.user.id) return;
-      fb.checklistsCollection.where('allowedUsers', 'array-contains', state.user.id ? state.user.id : 'invalid_userid').orderBy('createdOn', 'desc').onSnapshot(async snapshot => {
+      state.collectionsListenerUnsubscribe = fb.checklistsCollection.where('allowedUsers', 'array-contains', state.user.id ? state.user.id : 'invalid_userid').orderBy('createdOn', 'desc').onSnapshot(async snapshot => {
         let checklists: any[] = [];
 
         for (const doc of snapshot.docs) {
@@ -51,6 +53,12 @@ const store = createStore<State>({
         store.commit('setChecklists', checklists);
       })
       state.firebaseListenersInitiated = true;
+    },
+    stopFirebaseListeners(state) {
+      if (state.collectionsListenerUnsubscribe) {
+        state.collectionsListenerUnsubscribe();
+        console.log('collections listener stopped');
+      }
     }
   },
   actions: {
@@ -149,10 +157,11 @@ const store = createStore<State>({
       }
     },
     async logout({ commit }) {
+      commit('stopFirebaseListeners');
       await fb.auth.signOut()
 
       // clear userProfile and redirect to /login
-      commit('setUserProfile', {})
+      commit('setUserProfile', null)
       router.push('/login')
     }
   },

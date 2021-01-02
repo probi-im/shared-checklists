@@ -105,4 +105,16 @@ export default defineComponent({
     margin-top: 15px;
   }
 }
+
+@media (max-width: 700px) {
+  .dialog {
+    &-container {
+      width: 90vw;
+    }
+
+    &-header {
+      font-size: 0.8rem;
+    }
+  }
+}
 </style>

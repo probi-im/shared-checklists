@@ -4,20 +4,14 @@
       <router-link to="home" class="icon"><Icon :name="'arrow'" /></router-link>
       <h1 v-if="!checklist">Loading checklist...</h1>
       <h1 v-else>{{ checklist.name }}</h1>
-      <button
-        v-if="checklist && !deleting && !deleted"
-        class="custom-button icon"
-        @click="showAddNewItemDialog"
-      >
-        <Icon :name="'plus'" />
-      </button>
-      <button
-        v-if="checklist && !deleting && !deleted"
-        class="custom-button icon"
-        @click="deleteChecklist"
-      >
-        <Icon :name="'delete'" />
-      </button>
+      <div v-if="checklist && !deleting && !deleted" class="buttons">
+        <button class="custom-button icon" @click="showAddNewItemDialog">
+          <Icon :name="'plus'" />
+        </button>
+        <button class="custom-button icon" @click="deleteChecklist">
+          <Icon :name="'delete'" />
+        </button>
+      </div>
     </div>
     <div v-if="checklist" class="list">
       <div

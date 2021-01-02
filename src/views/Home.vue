@@ -2,13 +2,17 @@
   <div class="home">
     <div class="header">
       <h1>Shared Checklists</h1>
-      <button class="custom-button icon" @click="showAddListDialog">
-        <Icon :name="'plus'" />
-      </button>
-      <button class="custom-button icon" @click="showCreateNewListDialog">
-        <Icon :name="'edit'" />
-      </button>
-      <button @click="logout" class="custom-button"><span>Logout</span></button>
+      <div class="buttons">
+        <button class="custom-button icon" @click="showAddListDialog">
+          <Icon :name="'plus'" />
+        </button>
+        <button class="custom-button icon" @click="showCreateNewListDialog">
+          <Icon :name="'edit'" />
+        </button>
+        <button @click="logout" class="custom-button">
+          <span>Logout</span>
+        </button>
+      </div>
     </div>
 
     <List />

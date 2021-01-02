@@ -4,6 +4,13 @@
       <router-link to="home" class="icon"><Icon :name="'arrow'" /></router-link>
       <h1 v-if="!checklist">Loading checklist...</h1>
       <h1 v-else>{{ checklist.name }}</h1>
+      <button
+        v-if="checklist && !deleting && !deleted"
+        class="custom-button icon"
+        @click="deleteChecklist"
+      >
+        <Icon :name="'delete'" />
+      </button>
     </div>
     <div v-if="checklist" class="list">
       <div
@@ -27,9 +34,11 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import Icon from "@/components/Icon.vue";
-import { useStore } from "vuex";
+import { useStore, Store } from "vuex";
 import { useRoute } from "vue-router";
+import router from "@/router";
 import * as fb from "../firebase";
+import { Checklist, State } from "@/store";
 
 export default defineComponent({
   name: "Checklist",
@@ -37,41 +46,55 @@ export default defineComponent({
     Icon,
   },
   setup() {
-    const store = useStore();
+    const store: Store<State> = useStore();
     const route = useRoute();
 
     const contentLoaded = ref(true);
-    // const items = ref<any[]>([]);
+    const deleting = ref(false);
+    const deleted = ref(false);
 
-    // fb.checklistsCollection
-    //   .doc(route.query.id as string)
-    //   .collection("items")
-    //   .orderBy("createdOn", "desc")
-    //   .onSnapshot((snapshot) => {
-    //     let nItems = [];
-    //     for (const doc of snapshot.docs) {
-    //       let item = doc.data();
-    //       item.id = doc.id;
-    //       nItems.push(item);
-    //     }
-    //     items.value = nItems;
-    //     contentLoaded.value = true;
-    //   });
+    let currentChecklistVersion: Checklist | undefined = undefined;
 
-    const checklist = computed(() =>
-      store.state.checklists.find((c: any) => c.id === route.query.id)
-    );
+    const checklist = computed(() => {
+      if (!deleting.value && !deleted.value) {
+        currentChecklistVersion = store.state.checklists.find(
+          (c: any) => c.id === route.query.id
+        );
+      }
+      return currentChecklistVersion;
+    });
 
     const sortedItems = computed(() => {
-      return checklist.value.items.slice().sort((a: any, b: any) => {
+      return currentChecklistVersion?.items.slice().sort((a: any, b: any) => {
         return a.done === b.done ? 0 : a.done ? 1 : -1;
       });
     });
 
+    const deleteChecklist = () => {
+      if (deleting.value) return;
+      deleting.value = true;
+      store
+        .dispatch("deleteChecklist", checklist.value)
+        .then(() => {
+          deleted.value = true;
+          router.push("home");
+        })
+        .catch((e) => {
+          deleted.value = false;
+          console.log(e);
+        })
+        .finally(() => {
+          deleting.value = false;
+        });
+    };
+
     return {
-      contentLoaded,
-      sortedItems,
       checklist,
+      contentLoaded,
+      deleteChecklist,
+      deleted,
+      deleting,
+      sortedItems,
     };
   },
 });
@@ -82,7 +105,7 @@ export default defineComponent({
   display: flex;
   align-items: center;
 
-  .icon {
+  a.icon {
     border: 2px solid hsl(244, 53%, 24%);
     border-radius: 100px;
     padding: 3px;
@@ -100,6 +123,12 @@ export default defineComponent({
   h1 {
     margin-left: 20px;
     color: hsl(244, 69%, 37%);
+  }
+  button {
+    margin-left: auto;
+    svg {
+      fill: hsl(330, 85%, 44%);
+    }
   }
 }
 h3 {

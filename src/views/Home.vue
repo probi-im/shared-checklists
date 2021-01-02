@@ -22,7 +22,7 @@
       v-on:exit="addListDialogExitHandler"
     >
       <input
-        v-model="addListId"
+        v-model.trim="addListId"
         class="custom-input"
         type="text"
         name="createNewListName"
@@ -40,7 +40,7 @@
       v-on:exit="createNewListDialogExitHandler"
     >
       <input
-        v-model="newListName"
+        v-model.trim="newListName"
         class="custom-input"
         type="text"
         name="createNewListName"

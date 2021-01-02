@@ -101,6 +101,21 @@ const store = createStore<State>({
         throw e;
       }
     },
+    async toggleItemState({state}, data: { itemId: string, checklist: Checklist }) {
+      if (!state.user || !state.user.id || !data || !data.itemId || !data.checklist.id || !data.checklist.allowedUsers) return;
+      if (!data.checklist.allowedUsers.includes(state.user.id)) return;
+      try {
+         const index = data.checklist.items.findIndex(i => i.id === data.itemId);
+         if (index === -1) return;
+         data.checklist.items[index].done = !data.checklist.items[index].done;
+         await fb.checklistsCollection.doc(data.checklist.id).update({
+           items: data.checklist.items
+         });
+      } catch (e) {
+        console.log(e);
+        throw e;
+      }
+    },
     async login({ commit }, { email, password }) {
       try {
         const { user } = await fb.auth.signInWithEmailAndPassword(email, password);

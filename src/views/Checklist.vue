@@ -25,13 +25,9 @@
         :key="item.id"
         class="item"
         :class="{ done: item.done }"
+        @click="toggleItemState(item.id)"
       >
-        <input
-          type="checkbox"
-          :name="item.id"
-          :id="item.id"
-          v-model="item.done"
-        />
+        <Icon :name="item.done ? 'checkbox_filled' : 'checkbox_empty'" />
         <label :for="item.id">{{ item.text }}</label>
       </div>
     </div>
@@ -45,7 +41,7 @@
       v-on:exit="addNewItemDialogExitHandler"
     >
       <input
-        v-model="newItemText"
+        v-model.trim="newItemText"
         class="custom-input"
         type="text"
         name="addNewItemText"
@@ -138,6 +134,18 @@ export default defineComponent({
       newItemText.value = "";
     };
 
+    const toggleItemState = (itemId: string) => {
+      store
+        .dispatch("toggleItemState", {
+          itemId,
+          checklist: checklist.value,
+        })
+        .then(() => {})
+        .catch((e) => {
+          console.log(e);
+        });
+    };
+
     const deleteChecklist = () => {
       if (deleting.value) return;
       deleting.value = true;
@@ -168,6 +176,7 @@ export default defineComponent({
       newItemText,
       showAddNewItemDialog,
       sortedItems,
+      toggleItemState,
     };
   },
 });

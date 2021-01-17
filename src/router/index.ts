@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue'
 import PublicChecklists from '../views/PublicChecklists.vue'
+import PrivateChecklists from '../views/PrivateChecklists.vue'
 import Checklist from '../views/Checklist.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
@@ -24,9 +25,9 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/private',
     name: 'Private Checklists',
-    component: Home,
+    component: PrivateChecklists,
     meta: {
-      requiresAuth: true
+      // requiresAuth: true
     }
   },
   {

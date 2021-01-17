@@ -1,10 +1,8 @@
 <template>
-  <div class="public-checklists">
+  <div class="private-checklists">
     <div class="header">
-      <div class="title">Public Checklists</div>
-      <div class="subtitle">
-        List of public checklists available to everyone
-      </div>
+      <div class="title">Private Checklists</div>
+      <div class="subtitle">List of your private checklists</div>
     </div>
     <div class="content">
       <div class="search">
@@ -35,7 +33,7 @@ import { computed, defineComponent, ref } from "vue";
 import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
-  name: "Public Checklists",
+  name: "Private Checklists",
   components: {
     Icon,
   },
@@ -44,13 +42,13 @@ export default defineComponent({
     const checklists = ref([
       {
         title: "First checklist",
-        subtitle: "This is a public shopping list",
-        people: 39,
+        subtitle: "This is a shopping list",
+        people: 9,
       },
       {
         title: "Second checklist",
-        subtitle: "This is a public todo list",
-        people: 27,
+        subtitle: "This is a todo list",
+        people: 7,
       },
     ]);
 
@@ -76,7 +74,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.public-checklists {
+.private-checklists {
   .header {
     .title {
       font-size: 2.5rem;

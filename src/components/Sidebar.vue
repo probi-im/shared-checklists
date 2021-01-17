@@ -5,7 +5,24 @@
       Shared Checklists
     </div>
     <div class="nav">
-      <router-link class="nav-item" active-class="active" to="/public">
+      <template v-for="navItem in navItems">
+        <router-link
+          v-if="!navItem.requireAuth"
+          :key="navItem.title"
+          class="nav-item"
+          active-class="active"
+          :to="navItem.to"
+        >
+          <span class="icon"><Icon :name="navItem.icon" /></span>
+          {{ navItem.title }}
+        </router-link>
+        <div v-else :key="navItem.title" class="nav-item disabled">
+          <span class="icon"><Icon :name="navItem.icon" /></span>
+          {{ navItem.title }}
+          <router-link to="login">Log In</router-link>
+        </div>
+      </template>
+      <!-- <router-link class="nav-item" active-class="active" to="/public">
         <span class="icon"><Icon :name="'todo-list'" /></span>
         Public Checklists
       </router-link>
@@ -22,7 +39,7 @@
       <router-link class="nav-item" active-class="active" to="/">
         <span class="icon"><Icon :name="'about'" /></span>
         About
-      </router-link>
+      </router-link> -->
     </div>
     <div class="bottom">
       <router-link to="login"> Log In / Register </router-link>
@@ -31,13 +48,40 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
   name: "Sidebar",
   components: {
     Icon,
+  },
+  setup() {
+    const navItems = ref([
+      {
+        title: "Public Checklists",
+        icon: "todo-list",
+        to: "public",
+        requireAuth: false,
+      },
+      {
+        title: "My Checklists",
+        icon: "todo-list",
+        to: "private",
+        requireAuth: false,
+      },
+      {
+        title: "Settings",
+        icon: "settings",
+        to: "settings",
+        requireAuth: true,
+      },
+      { title: "About", icon: "about", to: "about", requireAuth: false },
+    ]);
+    // const filteredNavItems = computed(() => navItems.value.filter(i => i.))
+    return {
+      navItems,
+    };
   },
 });
 </script>

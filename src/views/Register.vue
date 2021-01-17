@@ -72,6 +72,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.register {
+  .header h1 {
+    font-size: 2.75rem;
+    text-transform: uppercase;
+  }
+}
 form {
   margin-top: 25px;
   width: 100%;
@@ -79,59 +85,53 @@ form {
   flex-direction: column;
   align-items: center;
 
-  > *:not(:first-child) {
-    margin-top: 15px;
-  }
-
   input {
     width: 100%;
-    padding: 10px 15px;
-    border: 2px solid lightgray;
-    border-radius: 10px;
-    outline: none;
+    max-width: 60%;
+    padding: 0.8rem 1rem;
+    border: none;
+    border-radius: 2rem;
     font-size: 1.2rem;
+    background: linear-gradient(
+      to right bottom,
+      rgba(255, 255, 255, 0.7),
+      rgba(255, 255, 255, 0.3)
+    );
+    outline: none;
 
     &:focus {
-      border-color: gray;
+      box-shadow: 0 0 1rem 0 #fff7;
+    }
+
+    &:not(:first-child) {
+      margin-top: 1rem;
     }
   }
 
   button {
-    padding: 10px 15px;
+    margin: 2rem 0;
+    padding: 0.8rem 1rem;
     font-size: 1.3rem;
     font-weight: bold;
     text-transform: uppercase;
     width: auto;
     color: white;
-    border: 2px solid blueviolet;
-    border-radius: 10px;
+    border: none;
+    border-radius: 0.8rem;
     cursor: pointer;
     outline: none;
-    background-color: transparent;
-
-    span {
-      background: linear-gradient(
-        -45deg,
-        hsl(283, 90%, 67%),
-        hsl(236, 100%, 65%)
-      );
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
+    background: linear-gradient(to bottom left, #00aeff, #67bacf);
+    transition: 0.15s opacity ease;
 
     &:hover {
-      background: linear-gradient(
-        -45deg,
-        hsla(283, 90%, 67%, 0.15),
-        hsl(236, 100%, 65%, 0.15)
-      );
+      opacity: 0.7;
     }
   }
 
   h3 {
     a {
       text-decoration: none;
-      color: hsl(268, 100%, 65%);
+      color: #3d9acf;
     }
   }
 }

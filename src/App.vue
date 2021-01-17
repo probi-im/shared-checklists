@@ -1,9 +1,7 @@
 <template>
   <main>
-    <section>
-      <Sidebar />
-    </section>
-    <section>
+    <Sidebar />
+    <section class="container">
       <router-view />
     </section>
   </main>
@@ -51,10 +49,15 @@ main {
   border-radius: 30px;
   min-width: 1200px;
   border: 1px solid #fffb;
+
+  .container {
+    flex: 1;
+    padding: 3rem;
+  }
 }
 
 .header {
-  color: hsl(244, 69%, 37%);
+  color: #261d9f;
   display: flex;
   align-items: center;
   .buttons {

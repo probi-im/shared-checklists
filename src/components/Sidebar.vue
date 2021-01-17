@@ -5,9 +5,13 @@
       Shared Checklists
     </div>
     <div class="nav">
+      <router-link class="nav-item" active-class="active" to="/public">
+        <span class="icon"><Icon :name="'todo-list'" /></span>
+        Public Checklists
+      </router-link>
       <div class="nav-item disabled">
         <span class="icon"><Icon :name="'todo-list'" /></span>
-        Checklists
+        My Checklists
         <router-link to="login">Log In</router-link>
       </div>
       <div class="nav-item disabled">
@@ -20,7 +24,9 @@
         About
       </router-link>
     </div>
-    <div class="bottom"><button>Log In / Register</button></div>
+    <div class="bottom">
+      <router-link to="login"> Log In / Register </router-link>
+    </div>
   </div>
 </template>
 
@@ -127,8 +133,10 @@ $border-radius: 2rem;
     display: grid;
     place-content: center;
 
-    button {
-      background: peru;
+    a {
+      text-decoration: none;
+      background: linear-gradient(to bottom left, #00aeff, #67bacf);
+      outline: none;
       color: #fff;
       font-size: 1.1rem;
       border: none;

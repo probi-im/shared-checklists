@@ -43,15 +43,15 @@ body {
   justify-content: center;
 }
 
-#app {
-}
-
 main {
   display: flex;
   background: linear-gradient(to top right, #fffa, #fff5);
   backdrop-filter: blur(1rem);
   border-radius: 30px;
   min-width: 1200px;
+  width: 1200px;
+  min-height: 700px;
+  height: 700px;
   border: 1px solid #fffb;
 
   .container {
@@ -62,8 +62,8 @@ main {
 
 .header {
   color: #261d9f;
-  display: flex;
-  align-items: center;
+  // display: flex;
+  // align-items: center;
   .buttons {
     margin-left: auto;
     display: flex;

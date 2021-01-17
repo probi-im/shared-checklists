@@ -197,6 +197,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+$color: #fffd;
+$done-color: #fff7;
 .header {
   display: flex;
   align-items: center;
@@ -233,9 +235,6 @@ export default defineComponent({
     }
   }
 }
-h3 {
-  margin-top: 25px;
-}
 .list:not(:empty) {
   margin-top: 25px;
 
@@ -243,15 +242,16 @@ h3 {
     display: flex;
     align-items: center;
     padding: 0 15px;
-    border: 2px solid darkgray;
+    border: 2px solid $color;
     border-radius: 15px;
     cursor: pointer;
+    color: $color;
 
     &:not(:first-child) {
       margin-top: 15px;
     }
-    input {
-      cursor: inherit;
+    > svg {
+      fill: $color;
     }
     label {
       padding: 15px 0 15px 15px;
@@ -260,10 +260,13 @@ h3 {
       cursor: inherit;
     }
     &.done {
-      border-color: lightgray;
+      border-color: $done-color;
 
+      > svg {
+        fill: $done-color;
+      }
       label {
-        color: lightgray;
+        color: $done-color;
       }
     }
     button {

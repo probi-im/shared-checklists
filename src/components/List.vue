@@ -34,18 +34,20 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+$color: #fff8;
+$hover-color: #fff;
 .checklists:not(:empty) {
   margin-top: 25px;
 }
 .checklist {
   padding: 15px;
-  border: 2px solid lightgray;
+  border: 2px solid $color;
   border-radius: 15px;
   cursor: pointer;
   font-size: 1.3rem;
   font-weight: bold;
-  color: darkgray;
-  transition: 0.25s all ease;
+  color: $color;
+  transition: 0.15s all ease;
   display: flex;
   align-items: center;
   text-decoration: none;
@@ -56,13 +58,13 @@ export default defineComponent({
 
   .icon {
     margin-left: auto;
-    border: 2px solid darkgray;
+    border: 2px solid $color;
     border-radius: 100px;
     padding: 3px;
     transition: inherit;
 
     svg {
-      fill: darkgray;
+      fill: $color;
       transition: inherit;
       width: 20px;
       height: 20px;
@@ -71,13 +73,13 @@ export default defineComponent({
   }
 
   &:hover {
-    border-color: hsl(244, 53%, 24%);
-    color: hsl(244, 53%, 24%);
+    border-color: $hover-color;
+    color: $hover-color;
 
     .icon {
-      border-color: hsl(244, 53%, 24%);
+      border-color: $hover-color;
       svg {
-        fill: hsl(244, 53%, 24%);
+        fill: $hover-color;
       }
     }
   }

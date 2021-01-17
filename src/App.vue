@@ -38,8 +38,12 @@ body {
 
 body {
   background: linear-gradient(to top right, #00aeff, #67bacf);
-  display: grid;
-  place-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#app {
 }
 
 main {

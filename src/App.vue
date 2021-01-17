@@ -1,13 +1,22 @@
 <template>
-  <router-view />
+  <main>
+    <section>
+      <Sidebar />
+    </section>
+    <section>
+      <router-view />
+    </section>
+  </main>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import store from "@/store";
+import Sidebar from "@/components/Sidebar.vue";
 
 export default defineComponent({
   name: "App",
+  components: { Sidebar },
   unmounted() {
     store.commit("stopFirebaseListeners");
   },
@@ -30,18 +39,20 @@ body {
 }
 
 body {
-  background: linear-gradient(-45deg, hsl(261, 100%, 50%), hsl(261, 76%, 55%));
+  background: linear-gradient(to top right, #00aeff, #67bacf);
   display: grid;
   place-content: center;
 }
 
-#app {
-  background-color: white;
-  padding: 50px;
+main {
+  display: flex;
+  background: linear-gradient(to top right, #fffa, #fff5);
+  backdrop-filter: blur(1rem);
   border-radius: 30px;
-  box-shadow: 0 10px 30px #333;
-  width: 700px;
+  min-width: 1200px;
+  border: 1px solid #fffb;
 }
+
 .header {
   color: hsl(244, 69%, 37%);
   display: flex;

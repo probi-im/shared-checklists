@@ -57,7 +57,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import List from "@/components/List.vue";
+import List from "@/components/oldList.vue";
 import { useStore } from "vuex";
 import Icon from "@/components/Icon.vue";
 import Dialog from "@/components/Dialog.vue";

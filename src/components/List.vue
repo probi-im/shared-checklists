@@ -1,86 +1,126 @@
 <template>
-  <div class="checklists">
+  <div class="list">
     <router-link
-      v-for="checklist in checklists"
-      :key="checklist.id"
-      :to="{ path: checklistPath, query: { id: checklist.id } }"
-      class="checklist"
+      class="list-item"
+      v-for="item in items"
+      :key="item.id"
+      :to="{
+        name: toRouteName,
+        params: { checklistId: item.id },
+      }"
     >
-      {{ checklist.name }}
-      <div class="icon"><Icon :name="'arrow'" /></div>
+      <div class="infos">
+        <div class="title">{{ item.title }}</div>
+        <div class="subtitle">{{ item.subtitle }}</div>
+      </div>
+      <div class="stats">
+        <span>{{ item.people }}</span>
+        <Icon :name="'person'" />
+      </div>
     </router-link>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent } from "vue";
 import Icon from "@/components/Icon.vue";
-import { useStore } from "vuex";
-
 export default defineComponent({
   name: "List",
   components: {
     Icon,
   },
-  setup() {
-    const store = useStore();
+  props: {
+    items: {
+      type: Array,
+      required: true,
+    },
+    keyAttributName: {
+      type: String,
+      required: false,
+    },
+    filterAttributName: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    filterString: {
+      type: String,
+      required: false,
+      default: "",
+    },
+    toRouteName: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const filteredItems = computed(() =>
+      props.items.filter((i: any) =>
+        props.filterAttributName
+          ? i[props.filterAttributName]
+              .toLowerCase()
+              .includes(props.filterString.toLowerCase())
+          : props.items
+      )
+    );
 
     return {
-      checklistPath: "checklist",
-      checklists: computed(() => store.state.checklists),
+      items: props.items,
+      keyAttributName: props.keyAttributName,
+      toRouteName: props.toRouteName,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-$color: #fff8;
-$hover-color: #fff;
-.checklists:not(:empty) {
-  margin-top: 25px;
-}
-.checklist {
-  padding: 15px;
-  border: 2px solid $color;
-  border-radius: 15px;
-  cursor: pointer;
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: $color;
-  transition: 0.15s all ease;
-  display: flex;
-  align-items: center;
-  text-decoration: none;
+.list {
+  margin-top: 2rem;
+  .list-item {
+    display: block;
+    text-decoration: none;
+    width: 100%;
+    background: linear-gradient(to top right, #fff7, #fffc);
+    border-radius: 1rem;
+    padding: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
 
-  &:not(:first-child) {
-    margin-top: 15px;
-  }
-
-  .icon {
-    margin-left: auto;
-    border: 2px solid $color;
-    border-radius: 100px;
-    padding: 3px;
-    transition: inherit;
-
-    svg {
-      fill: $color;
-      transition: inherit;
-      width: 20px;
-      height: 20px;
-      transform: translateX(1px);
-    }
-  }
-
-  &:hover {
-    border-color: $hover-color;
-    color: $hover-color;
-
-    .icon {
-      border-color: $hover-color;
-      svg {
-        fill: $hover-color;
+    .infos {
+      color: black;
+      .title {
+        font-size: 1.5rem;
       }
+    }
+
+    .stats {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      padding: 0.5rem;
+      border-radius: 0.7rem;
+
+      span {
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-top: 2px;
+        color: #555;
+      }
+
+      svg {
+        margin-left: 0.5rem;
+        margin-bottom: 2px;
+        fill: #555;
+      }
+    }
+
+    &:hover {
+      box-shadow: 0 0 10px #fff;
+    }
+    &:not(:last-child) {
+      margin-bottom: 1rem;
     }
   }
 }

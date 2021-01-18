@@ -8,44 +8,36 @@
       <div class="search">
         <input type="text" placeholder="Search" v-model.trim="searchQuery" />
       </div>
-      <div class="list">
-        <div
-          class="list-item"
-          v-for="checklist in filteredChecklists"
-          :key="checklist.title"
-        >
-          <div class="infos">
-            <div class="title">{{ checklist.title }}</div>
-            <div class="subtitle">{{ checklist.subtitle }}</div>
-          </div>
-          <div class="stats">
-            <span>{{ checklist.people }}</span>
-            <Icon :name="'person'" />
-          </div>
-        </div>
-      </div>
+      <List
+        :items="filteredChecklists"
+        :toRouteName="'private-checklist-details'"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import Icon from "@/components/Icon.vue";
+// import Icon from "@/components/Icon.vue";
+import List from "@/components/List.vue";
 
 export default defineComponent({
   name: "Private Checklists",
   components: {
-    Icon,
+    // Icon,
+    List,
   },
   setup() {
     const searchQuery = ref("");
     const checklists = ref([
       {
+        id: "0",
         title: "First checklist",
         subtitle: "This is a shopping list",
         people: 9,
       },
       {
+        id: "1",
         title: "Second checklist",
         subtitle: "This is a todo list",
         people: 7,
@@ -89,7 +81,6 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
     .search {
-      width: 100%;
       input {
         width: 100%;
         padding: 1rem 2rem;
@@ -115,6 +106,7 @@ export default defineComponent({
     .list {
       margin-top: 2rem;
       .list-item {
+        text-decoration: none;
         width: 100%;
         background: linear-gradient(to top right, #fff7, #fffc);
         border-radius: 1rem;
@@ -123,8 +115,11 @@ export default defineComponent({
         display: flex;
         align-items: center;
 
-        .title {
-          font-size: 1.5rem;
+        .infos {
+          color: black;
+          .title {
+            font-size: 1.5rem;
+          }
         }
 
         .stats {

@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue'
+import About from '../views/About.vue'
 import PublicChecklists from '../views/PublicChecklists.vue'
 import PrivateChecklists from '../views/PrivateChecklists.vue'
+import ChecklistDetails from '../views/ChecklistDetails.vue'
 import Checklist from '../views/Checklist.vue'
+import Settings from '../views/Settings.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import { auth } from '@/firebase'
@@ -14,17 +17,30 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/home',
-    name: 'Home',
+    name: 'home',
     component: Home
   },
   {
+    path: '/public/:checklistId',
+    name: 'public-checklist-details',
+    component: ChecklistDetails,
+  },
+  {
     path: '/public',
-    name: 'Public Checklists',
+    name: 'public-checklists',
     component: PublicChecklists
   },
   {
+    path: '/private/:checklistId',
+    name: 'private-checklist-details',
+    component: ChecklistDetails,
+    meta: {
+      // requiresAuth: true
+    }
+  },
+  {
     path: '/private',
-    name: 'Private Checklists',
+    name: 'private-checklists',
     component: PrivateChecklists,
     meta: {
       // requiresAuth: true
@@ -32,18 +48,33 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/checklist',
-    name: 'Checklist',
+    name: 'checklist',
     component: Checklist,
   },
   {
+    path: '/settings',
+    name: 'settings',
+    component: Settings,
+  },
+  {
+    path: '/about',
+    name: 'about',
+    component: About,
+  },
+  {
     path: '/login',
-    name: 'Login',
+    name: 'login',
     component: Login,
   },
   {
     path: '/register',
-    name: 'Register',
+    name: 'register',
     component: Register,
+  },
+  {
+    path: '/:patchMatch(.*)*',
+    name: 'not-found',
+    component: Home
   }
 ]
 

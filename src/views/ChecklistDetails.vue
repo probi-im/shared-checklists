@@ -1,88 +1,117 @@
 <template>
-  <div class="public-checklists">
+  <div class="checklist-details">
     <div class="header">
-      <div class="title">Public Checklists</div>
-      <div class="subtitle">
-        List of public checklists available to everyone
-      </div>
+      <div class="title">Checklist details</div>
     </div>
     <div class="content">
       <div class="search">
         <input type="text" placeholder="Search" v-model.trim="searchQuery" />
       </div>
-      <List
-        :items="filteredChecklists"
-        :toRouteName="'public-checklist-details'"
-      />
+      <div class="list">
+        <div
+          class="list-item"
+          v-for="item in filteredItems"
+          :key="item.id"
+          :class="{ done: item.done }"
+          @click="toggleItem(item.id)"
+        >
+          <div class="infos">
+            <div class="title">{{ item.title }}</div>
+            <div class="subtitle">{{ item.createdAt }}</div>
+          </div>
+          <div class="stats">
+            <Icon v-if="item.done" :name="'checkbox_filled'" />
+            <Icon v-else :name="'checkbox_empty'" />
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-// import Icon from "@/components/Icon.vue";
-import List from "@/components/List.vue";
+import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
-  name: "Public Checklists",
+  name: "ChecklistDetails",
   components: {
-    // Icon,
-    List,
+    Icon,
   },
   setup() {
     const searchQuery = ref("");
-    const checklists = ref([
+    const items = ref([
       {
-        id: 0,
-        title: "First checklist",
-        subtitle: "This is a public shopping list",
-        people: 39,
+        id: "0",
+        title: "First item",
+        done: false,
+        createdAt: Date.now(),
       },
       {
-        id: 1,
-        title: "Second checklist",
-        subtitle: "This is a public todo list",
-        people: 27,
+        id: "1",
+        title: "Second item",
+        done: true,
+        createdAt: Date.now() + 1000,
+      },
+      {
+        id: "2",
+        title: "Third item",
+        done: false,
+        createdAt: Date.now() + 2000,
       },
     ]);
 
-    const filteredChecklists = computed(() =>
-      checklists.value
-        .filter(
-          (c) =>
-            c.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            c.subtitle.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const filteredItems = computed(() =>
+      items.value
+        .filter((c) =>
+          c.title.toLowerCase().includes(searchQuery.value.toLowerCase())
         )
+        // sorting by creation date
         .sort((a, b) => {
-          return a.people < b.people ? 1 : a.people > b.people ? -1 : 0;
+          return a.createdAt > b.createdAt
+            ? 1
+            : a.createdAt < b.createdAt
+            ? -1
+            : 0;
+        })
+        // sorting by item state
+        .sort((a, b) => {
+          return a.done && b.done ? 0 : a.done ? 1 : -1;
         })
     );
 
+    const toggleItem = (itemId: string) => {
+      const item = items.value.find((i) => i.id === itemId);
+      if (!item) return;
+      item.done = !item.done;
+    };
+
     return {
+      filteredItems,
       searchQuery,
-      checklists,
-      filteredChecklists,
+      toggleItem,
     };
   },
 });
 </script>
 
 <style lang="scss" scoped>
-.public-checklists {
+.checklist-details {
   .header {
     .title {
       font-size: 2.5rem;
       font-weight: bold;
     }
-    .subtitle {
-      font-size: 1.5rem;
-    }
+    // .subtitle {
+    //   font-size: 1.5rem;
+    // }
   }
   .content {
     margin-top: 2rem;
     display: flex;
     flex-direction: column;
     .search {
+      width: 100%;
       input {
         width: 100%;
         padding: 1rem 2rem;
@@ -129,7 +158,7 @@ export default defineComponent({
           margin-left: auto;
           display: flex;
           align-items: center;
-          background: #fff;
+          // background: #fff;
           padding: 0.5rem;
           border-radius: 0.7rem;
 
@@ -141,12 +170,14 @@ export default defineComponent({
           }
 
           svg {
-            margin-left: 0.5rem;
             margin-bottom: 2px;
             fill: #555;
           }
         }
 
+        &.done {
+          background: linear-gradient(to top right, #fff5, #fff8);
+        }
         &:hover {
           box-shadow: 0 0 10px #fff;
         }

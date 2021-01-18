@@ -22,24 +22,6 @@
           <router-link to="login">Log In</router-link>
         </div>
       </template>
-      <!-- <router-link class="nav-item" active-class="active" to="/public">
-        <span class="icon"><Icon :name="'todo-list'" /></span>
-        Public Checklists
-      </router-link>
-      <div class="nav-item disabled">
-        <span class="icon"><Icon :name="'todo-list'" /></span>
-        My Checklists
-        <router-link to="login">Log In</router-link>
-      </div>
-      <div class="nav-item disabled">
-        <span class="icon"><Icon :name="'settings'" /></span>
-        Settings
-        <router-link to="login">Log In</router-link>
-      </div>
-      <router-link class="nav-item" active-class="active" to="/">
-        <span class="icon"><Icon :name="'about'" /></span>
-        About
-      </router-link> -->
     </div>
     <div class="bottom">
       <router-link to="login"> Log In / Register </router-link>
@@ -61,22 +43,22 @@ export default defineComponent({
       {
         title: "Public Checklists",
         icon: "todo-list",
-        to: "public",
+        to: "/public",
         requireAuth: false,
       },
       {
         title: "My Checklists",
         icon: "todo-list",
-        to: "private",
+        to: "/private",
         requireAuth: false,
       },
       {
         title: "Settings",
         icon: "settings",
-        to: "settings",
+        to: "/settings",
         requireAuth: true,
       },
-      { title: "About", icon: "about", to: "about", requireAuth: false },
+      { title: "About", icon: "about", to: "/about", requireAuth: false },
     ]);
     // const filteredNavItems = computed(() => navItems.value.filter(i => i.))
     return {

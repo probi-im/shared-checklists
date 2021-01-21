@@ -20,14 +20,24 @@
           class="list-item"
           v-for="item in filteredItems"
           :key="item.id"
-          :class="{ done: item.done }"
-          @click="toggleItem(item.id)"
+          :class="{ done: item.done, locked: !checklist.allowedUsers.includes(user.id) }"
+          @click="checklist.allowedUsers.includes(user.id) ? toggleItem(item.id) : ''"
         >
           <div class="infos">
             <div class="title">{{ item.title || item.text }}</div>
             <div class="subtitle">
               {{ formattedDate(item.createdOn.seconds * 1000) }}
             </div>
+          </div>
+          <div class="actions">
+            <button
+              v-if="checklist.allowedUsers.includes(user.id)"
+              title="Delete this item"
+              @click.stop="delItem(item.id)"
+              class="warn"
+            >
+              <Icon :name="'trash'" />
+            </button>
           </div>
           <div class="stats">
             <Icon v-if="item.done" :name="'checkbox_filled'" />
@@ -45,8 +55,10 @@ import { format } from "date-fns";
 import Icon from "@/components/Icon.vue";
 import { useRoute } from "vue-router";
 import router from "@/router";
-import { getChecklistFromId } from "@/services/checklistService";
+import { deleteItem, getChecklistFromId, toggleItemState } from "@/services/checklistService";
 import { Checklist } from "@/models/checklist";
+import { useStore } from "vuex";
+import { State } from "@/store";
 
 export default defineComponent({
   name: "ChecklistDetails",
@@ -54,6 +66,7 @@ export default defineComponent({
     Icon,
   },
   setup() {
+    const store = useStore<State>();
     const route = useRoute();
 
     const checklist = ref<Checklist>();
@@ -76,18 +89,24 @@ export default defineComponent({
         : []
     );
 
-    const toggleItem = (itemId: string) => {
+    const toggleItem = async (itemId: string) => {
       if (!checklist.value) return;
-      const item = checklist.value.items.find((i) => i.id === itemId);
-      if (!item) return;
-      item.done = !item.done;
+      await toggleItemState(checklist.value, itemId);
+      await getChecklist();
+    };
+
+    const delItem = async (itemId: string) => {
+      if (!checklist.value) return;
+      await deleteItem(checklist.value, itemId);
+      await getChecklist();
     };
 
     const formattedDate = (dateTimestamp: number) => {
       return format(dateTimestamp, "dd-MM-yyyy HH:mm");
     };
 
-    onMounted(async () => {
+    const getChecklist = async () => {
+      loadingChecklist.value = true;
       const checklistId = route.params.checklistId;
 
       if (!checklistId || checklistId === "" || checklistId.length === 0) return;
@@ -96,15 +115,22 @@ export default defineComponent({
       if (!checklistResult) return;
       checklist.value = checklistResult;
       loadingChecklist.value = false;
+    };
+
+    onMounted(async () => {
+      await getChecklist();
     });
 
     return {
       checklist,
+      delItem,
       filteredItems,
       formattedDate,
+      getChecklist,
       loadingChecklist,
       searchQuery,
       toggleItem,
+      user: computed(() => store.state.user),
     };
   },
 });
@@ -180,7 +206,6 @@ export default defineComponent({
         background: linear-gradient(to top right, #fff7, #fffc);
         border-radius: 1rem;
         padding: 1rem;
-        cursor: pointer;
         display: flex;
         align-items: center;
 
@@ -191,6 +216,34 @@ export default defineComponent({
           }
           .subtitle {
             color: grey;
+          }
+        }
+
+        .actions {
+          margin-left: auto;
+          display: none;
+          opacity: 0;
+          place-content: center;
+
+          button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            svg {
+              fill: darkgrey;
+            }
+
+            &:hover {
+              svg {
+                fill: blue;
+              }
+              &.warn {
+                svg {
+                  fill: red;
+                }
+              }
+            }
           }
         }
 
@@ -220,8 +273,16 @@ export default defineComponent({
             }
           }
         }
-        &:hover {
+        &:not(.locked):hover {
+          cursor: pointer;
           box-shadow: 0 0 10px #fff;
+          .actions {
+            display: grid;
+            opacity: 1;
+          }
+          .stats {
+            margin-left: 0.8rem;
+          }
         }
         &:not(:last-child) {
           margin-bottom: 1rem;

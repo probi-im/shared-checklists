@@ -56,3 +56,21 @@ export async function joinChecklist(checklistId: string, userId: string) {
     .doc(checklistId)
     .update({ allowedUsers: firebase.firestore.FieldValue.arrayUnion(userId) });
 }
+
+export async function toggleItemState(checklist: Checklist, itemId: string) {
+  const itemIndex = checklist.items.findIndex(i => i.id === itemId);
+  if (itemIndex === -1) return;
+  checklist.items[itemIndex].done = !checklist.items[itemIndex].done;
+  await fb.checklistsCollection.doc(checklist.id).update({
+    items: checklist.items
+  });
+}
+
+export async function deleteItem(checklist: Checklist, itemId: string) {
+  const item = checklist.items.find(i => i.id === itemId);
+  if (!item) return;
+  console.log("deleteItem: item found:", item);
+  await fb.checklistsCollection
+    .doc(checklist.id)
+    .update({ items: firebase.firestore.FieldValue.arrayRemove(item) });
+}

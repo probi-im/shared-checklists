@@ -7,7 +7,7 @@
     <div class="nav">
       <template v-for="navItem in navItems">
         <router-link
-          v-if="!navItem.requireAuth"
+          v-if="!navItem.requireAuth || user"
           :key="navItem.title"
           class="nav-item"
           active-class="active"
@@ -24,7 +24,8 @@
       </template>
     </div>
     <div class="bottom">
-      <router-link to="login"> Log In / Register </router-link>
+      <router-link v-if="!user" to="login"> Log In / Register </router-link>
+      <button v-else @click="logout">Log Out</button>
     </div>
   </div>
 </template>
@@ -32,6 +33,8 @@
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
 import Icon from "@/components/Icon.vue";
+import { useStore } from "vuex";
+import { State } from "@/store";
 
 export default defineComponent({
   name: "Sidebar",
@@ -39,6 +42,7 @@ export default defineComponent({
     Icon,
   },
   setup() {
+    const store = useStore<State>();
     const navItems = ref([
       {
         title: "Public Checklists",
@@ -50,7 +54,7 @@ export default defineComponent({
         title: "My Checklists",
         icon: "todo-list",
         to: { name: "private-checklists" },
-        requireAuth: false,
+        requireAuth: true,
       },
       {
         title: "Settings",
@@ -65,9 +69,13 @@ export default defineComponent({
         requireAuth: false,
       },
     ]);
-    // const filteredNavItems = computed(() => navItems.value.filter(i => i.))
+
+    const logout = () => store.dispatch("logout");
+
     return {
+      logout,
       navItems,
+      user: computed(() => store.state.user),
     };
   },
 });
@@ -164,7 +172,8 @@ $border-radius: 2rem;
     display: grid;
     place-content: center;
 
-    a {
+    a,
+    button {
       text-decoration: none;
       background: linear-gradient(to bottom left, #00aeff, #67bacf);
       outline: none;

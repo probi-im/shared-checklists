@@ -73,6 +73,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .list {
+  padding: 1rem;
   .list-item {
     display: block;
     text-decoration: none;

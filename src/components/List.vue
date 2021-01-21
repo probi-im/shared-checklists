@@ -9,6 +9,21 @@
         params: { checklistId: item.id },
       }"
     >
+      <div v-if="item.status === 'public' || item.createdBy" class="flags">
+        <div v-if="item.status === 'public'" class="icon" title="This checklist is public">
+          <Icon :name="'public'" />
+        </div>
+        <div v-else class="icon" title="This checklist is private">
+          <Icon :name="'public_off'" />
+        </div>
+        <div
+          v-if="user && user.id === item.createdBy"
+          class="icon"
+          title="You created this checklist"
+        >
+          <Icon :name="'lock'" />
+        </div>
+      </div>
       <div class="infos">
         <div class="title">{{ item.name }}</div>
         <div class="subtitle">{{ item.desc }}</div>
@@ -24,6 +39,8 @@
 <script lang="ts">
 import { computed, defineComponent } from "vue";
 import Icon from "@/components/Icon.vue";
+import { useStore } from "vuex";
+import { State } from "@/store";
 export default defineComponent({
   name: "List",
   components: {
@@ -54,6 +71,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const store = useStore<State>();
     const filteredItems = computed(() =>
       props.items.filter((i: any) =>
         props.filterAttributName
@@ -66,6 +84,7 @@ export default defineComponent({
       items: computed(() => props.items),
       keyAttributName: props.keyAttributName,
       toRouteName: props.toRouteName,
+      user: computed(() => store.state.user),
     };
   },
 });
@@ -80,10 +99,24 @@ export default defineComponent({
     width: 100%;
     background: linear-gradient(to top right, #fff7, #fffc);
     border-radius: 1rem;
-    padding: 1rem;
+    padding: 0 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
+    height: 5rem;
+
+    .flags {
+      margin-right: 0.6rem;
+      .icon {
+        &:not(:first-child) {
+          margin-top: 0.3rem;
+        }
+      }
+      svg {
+        fill: darkgrey;
+        width: 1.2rem;
+      }
+    }
 
     .infos {
       color: black;

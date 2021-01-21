@@ -4,11 +4,12 @@ import router from "@/router";
 import firebase from "firebase/app";
 import { Checklist } from "@/models/checklist";
 import { Item } from "@/models/item";
+import { User } from "@/models/user";
 
 export interface State {
   checklists: Checklist[];
   firebaseListenersInitiated: boolean;
-  user: any;
+  user: User | null;
   collectionsListenerUnsubscribe: Function | null;
 }
 

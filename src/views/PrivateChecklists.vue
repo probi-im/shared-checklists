@@ -1,5 +1,6 @@
 <template>
-  <div class="private-checklists">
+  <div v-if="loadingChecklists" class="loadin">Loading checklists...</div>
+  <div v-else class="private-checklists">
     <div class="header">
       <div class="title">Private Checklists</div>
       <div class="subtitle">List of your private checklists</div>
@@ -14,11 +15,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useStore, Store } from "vuex";
 import { State } from "@/store";
 // import Icon from "@/components/Icon.vue";
 import List from "@/components/List.vue";
+import { getPrivateChecklistsFromUserId } from "@/services/checklistService";
+import { Checklist } from "@/models/checklist";
 
 export default defineComponent({
   name: "Private Checklists",
@@ -44,24 +47,34 @@ export default defineComponent({
     //   },
     // ]);
 
-    const checklists = ref(store.state.checklists);
+    const checklists = ref<Checklist[]>();
+    const loadingChecklists = ref(true);
 
     const filteredChecklists = computed(() =>
       checklists.value
-        .filter(
+        ?.filter(
           (c) =>
             c.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            c.desc.toLowerCase().includes(searchQuery.value.toLowerCase())
+            c.desc?.toLowerCase().includes(searchQuery.value.toLowerCase())
         )
         .sort((a, b) => {
           return a.people < b.people ? 1 : a.people > b.people ? -1 : 0;
         })
     );
+    const user = computed(() => store.state.user);
+
+    onMounted(async () => {
+      if (!store.state.user) return;
+      checklists.value = await getPrivateChecklistsFromUserId(store.state.user.id);
+      loadingChecklists.value = false;
+    });
 
     return {
       searchQuery,
       checklists,
       filteredChecklists,
+      loadingChecklists,
+      user,
     };
   },
 });

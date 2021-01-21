@@ -15,9 +15,16 @@ function docToChecklist(
 }
 
 export async function getPublicChecklists() {
+  const snapshot = await fb.checklistsCollection.where("status", "==", "public").get();
+
+  if (snapshot.empty) return [];
+
+  return snapshot.docs.map(doc => docToChecklist(doc));
+}
+
+export async function getPrivateChecklistsFromUserId(userId: string) {
   const snapshot = await fb.checklistsCollection
-    .where("status", "==", "public")
-    .orderBy("createdOn", "desc")
+    .where("allowedUsers", "array-contains", userId)
     .get();
 
   if (snapshot.empty) return [];

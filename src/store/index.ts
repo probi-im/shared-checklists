@@ -168,7 +168,7 @@ const store = createStore<State>({
             photoUrl: user.photoURL
           });
           // commit("initializeFirebaseListeners");
-          router.push("home");
+          router.push({ name: "private-checklists" });
         }
       } catch (e) {
         console.log(e);
@@ -186,7 +186,7 @@ const store = createStore<State>({
             photoUrl: user.photoURL
           });
           // commit("initializeFirebaseListeners");
-          router.push("home");
+          router.push({ name: "private-checklists" });
         }
       } catch (e) {
         console.log(e);

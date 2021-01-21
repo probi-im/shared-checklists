@@ -5,6 +5,8 @@ import PublicChecklists from "../views/PublicChecklists.vue";
 import PrivateChecklists from "../views/PrivateChecklists.vue";
 import ChecklistDetails from "../views/ChecklistDetails.vue";
 import Checklist from "../views/Checklist.vue";
+import NewChecklist from "../views/NewChecklist.vue";
+import NewItem from "../views/NewItem.vue";
 import Settings from "../views/Settings.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
@@ -13,7 +15,7 @@ import { auth } from "@/firebase";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "home"
+    redirect: "public-checklists"
   },
   {
     path: "/home",
@@ -50,6 +52,22 @@ const routes: Array<RouteRecordRaw> = [
     path: "/checklist",
     name: "checklist",
     component: Checklist
+  },
+  {
+    path: "/new-checklist",
+    name: "new-checklist",
+    component: NewChecklist,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/new-item/:checklistId",
+    name: "new-item",
+    component: NewItem,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: "/settings",

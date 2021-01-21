@@ -40,7 +40,7 @@ import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
 
 export default defineComponent({
-  name: "Login",
+  name: "Register",
   components: {},
   setup() {
     const store = useStore();

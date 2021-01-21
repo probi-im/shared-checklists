@@ -31,7 +31,7 @@
       <div class="actions">
         <button
           title="Delete this checklist"
-          v-if="item.createdBy === user.id"
+          v-if="user && user.id === item.createdBy"
           @click.prevent="del(item.id)"
           class="warn"
         >
@@ -39,7 +39,7 @@
         </button>
         <button
           title="Leave this checklist"
-          v-else-if="item.allowedUsers.includes(user.id)"
+          v-else-if="user && item.allowedUsers.includes(user.id)"
           @click.prevent="leave(item.id)"
           class="warn"
         >

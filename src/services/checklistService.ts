@@ -1,4 +1,5 @@
 import { Checklist } from "@/models/checklist";
+import { Item } from "@/models/item";
 import firebase from "firebase/app";
 import * as fb from "../firebase";
 
@@ -41,6 +42,20 @@ export async function getChecklistFromId(checklistId: string): Promise<Checklist
   return docToChecklist(doc);
 }
 
+export async function createChecklist(checklist: Checklist) {
+  await fb.checklistsCollection.add(checklist);
+}
+
+export async function cdreateChecklist(checklist: {
+  name: string;
+  items: any[];
+  status: string;
+  createdBy: string;
+  createdOn: Date;
+}) {
+  await fb.checklistsCollection.add(checklist);
+}
+
 export async function deleteChecklist(checklistId: string) {
   await fb.checklistsCollection.doc(checklistId).delete();
 }
@@ -57,6 +72,12 @@ export async function joinChecklist(checklistId: string, userId: string) {
     .update({ allowedUsers: firebase.firestore.FieldValue.arrayUnion(userId) });
 }
 
+export async function addItemToChecklist(item: Item, checklistId: string) {
+  await fb.checklistsCollection
+    .doc(checklistId)
+    .update({ items: firebase.firestore.FieldValue.arrayUnion(item) });
+}
+
 export async function toggleItemState(checklist: Checklist, itemId: string) {
   const itemIndex = checklist.items.findIndex(i => i.id === itemId);
   if (itemIndex === -1) return;
@@ -69,7 +90,6 @@ export async function toggleItemState(checklist: Checklist, itemId: string) {
 export async function deleteItem(checklist: Checklist, itemId: string) {
   const item = checklist.items.find(i => i.id === itemId);
   if (!item) return;
-  console.log("deleteItem: item found:", item);
   await fb.checklistsCollection
     .doc(checklist.id)
     .update({ items: firebase.firestore.FieldValue.arrayRemove(item) });

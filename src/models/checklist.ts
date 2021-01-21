@@ -1,7 +1,7 @@
 import { Item } from "@/models/item";
 
 export interface Checklist {
-  id: string;
+  id?: string;
   name: string;
   desc: string;
   items: Item[];

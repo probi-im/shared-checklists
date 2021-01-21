@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loadingChecklist" class="loadin">Loading checklist details...</div>
+  <div v-if="loadingChecklist" class="loading">Loading checklist details...</div>
   <div v-else class="checklist-details">
     <div class="header">
       <div class="title">
@@ -11,17 +11,22 @@
         left)
       </div>
     </div>
+    <div class="add-div">
+      <router-link :to="{ name: 'new-item', params: { checklistId: checklist.id } }"
+        ><Icon :name="'add'"
+      /></router-link>
+    </div>
+    <div class="search">
+      <input type="text" placeholder="Search" v-model.trim="searchQuery" />
+    </div>
     <div class="content">
-      <div class="search">
-        <input type="text" placeholder="Search" v-model.trim="searchQuery" />
-      </div>
       <div class="list">
         <div
           class="list-item"
           v-for="item in filteredItems"
           :key="item.id"
-          :class="{ done: item.done, locked: !checklist.allowedUsers.includes(user.id) }"
-          @click="checklist.allowedUsers.includes(user.id) ? toggleItem(item.id) : ''"
+          :class="{ done: item.done, locked: !user || !checklist.allowedUsers.includes(user.id) }"
+          @click="user && checklist.allowedUsers.includes(user.id) ? toggleItem(item.id) : ''"
         >
           <div class="infos">
             <div class="title">{{ item.title || item.text }}</div>
@@ -31,7 +36,7 @@
           </div>
           <div class="actions">
             <button
-              v-if="checklist.allowedUsers.includes(user.id)"
+              v-if="user && checklist.allowedUsers.includes(user.id)"
               title="Delete this item"
               @click.stop="delItem(item.id)"
               class="warn"
@@ -138,6 +143,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .checklist-details {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   .header {
     .title {
       display: flex;
@@ -169,36 +177,65 @@ export default defineComponent({
       margin-top: 0.3rem;
     }
   }
+  .add-div {
+    display: flex;
+    justify-content: flex-end;
+    a {
+      margin: 0 0 1rem;
+      padding: 0.8rem 1rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      width: auto;
+      color: white;
+      border: none;
+      border-radius: 0.8rem;
+      cursor: pointer;
+      outline: none;
+      background: linear-gradient(to bottom left, #00aeff, #67bacf);
+      transition: 0.15s opacity ease;
+
+      svg {
+        fill: white;
+      }
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+  .search {
+    width: 100%;
+    input {
+      width: 100%;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 3rem;
+      font-size: 1.2rem;
+      background: linear-gradient(
+        to right bottom,
+        rgba(255, 255, 255, 0.7),
+        rgba(255, 255, 255, 0.3)
+      );
+      outline: none;
+
+      &:focus {
+        box-shadow: 0 0 1rem 0 #fff7;
+      }
+
+      &:not(:first-child) {
+        margin-top: 1rem;
+      }
+    }
+  }
   .content {
+    flex: 1;
+    overflow: auto;
     margin-top: 2rem;
     display: flex;
     flex-direction: column;
-    .search {
-      width: 100%;
-      input {
-        width: 100%;
-        padding: 1rem 2rem;
-        border: none;
-        border-radius: 3rem;
-        font-size: 1.2rem;
-        background: linear-gradient(
-          to right bottom,
-          rgba(255, 255, 255, 0.7),
-          rgba(255, 255, 255, 0.3)
-        );
-        outline: none;
-
-        &:focus {
-          box-shadow: 0 0 1rem 0 #fff7;
-        }
-
-        &:not(:first-child) {
-          margin-top: 1rem;
-        }
-      }
-    }
     .list {
-      margin-top: 2rem;
+      padding: 1rem;
       .list-item {
         display: block;
         text-decoration: none;

@@ -8,4 +8,5 @@ export interface Checklist {
   allowedUsers: string[];
   people: number;
   createdOn: Date;
+  createdBy?: string;
 }

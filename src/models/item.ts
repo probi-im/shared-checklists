@@ -3,4 +3,5 @@ export interface Item {
   text: string;
   done: boolean;
   createdOn: Date;
+  createdBy?: string;
 }

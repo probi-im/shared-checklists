@@ -1,67 +1,57 @@
 <template>
-  <div class="public-checklists">
+  <div v-if="loadingChecklists" class="loadin">Loading checklists...</div>
+  <div v-else class="public-checklists">
     <div class="header">
       <div class="title">Public Checklists</div>
-      <div class="subtitle">
-        List of public checklists available to everyone
-      </div>
+      <div class="subtitle">List of public checklists available to everyone</div>
+    </div>
+    <div class="search">
+      <input type="text" placeholder="Search" v-model.trim="searchQuery" />
     </div>
     <div class="content">
-      <div class="search">
-        <input type="text" placeholder="Search" v-model.trim="searchQuery" />
-      </div>
-      <List
-        :items="filteredChecklists"
-        :toRouteName="'public-checklist-details'"
-      />
+      <List :items="filteredChecklists" :toRouteName="'public-checklist-details'" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
-// import Icon from "@/components/Icon.vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import List from "@/components/List.vue";
+import { getPublicChecklists } from "@/services/checklistService";
+import { Checklist } from "@/models/checklist";
 
 export default defineComponent({
   name: "Public Checklists",
   components: {
-    // Icon,
     List,
   },
   setup() {
     const searchQuery = ref("");
-    const checklists = ref([
-      {
-        id: 0,
-        title: "First checklist",
-        subtitle: "This is a public shopping list",
-        people: 39,
-      },
-      {
-        id: 1,
-        title: "Second checklist",
-        subtitle: "This is a public todo list",
-        people: 27,
-      },
-    ]);
+
+    const checklists = ref<Checklist[]>();
+    const loadingChecklists = ref(true);
 
     const filteredChecklists = computed(() =>
       checklists.value
-        .filter(
+        ?.filter(
           (c) =>
-            c.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-            c.subtitle.toLowerCase().includes(searchQuery.value.toLowerCase())
+            c.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+            c.desc?.toLowerCase().includes(searchQuery.value.toLowerCase())
         )
         .sort((a, b) => {
           return a.people < b.people ? 1 : a.people > b.people ? -1 : 0;
         })
     );
 
+    onMounted(async () => {
+      checklists.value = await getPublicChecklists();
+      loadingChecklists.value = false;
+    });
+
     return {
       searchQuery,
-      checklists,
       filteredChecklists,
+      loadingChecklists,
     };
   },
 });
@@ -69,6 +59,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .public-checklists {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   .header {
     .title {
       font-size: 2.5rem;
@@ -78,83 +71,34 @@ export default defineComponent({
       font-size: 1.5rem;
     }
   }
+  .search {
+    margin-top: 2rem;
+    input {
+      width: 100%;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 3rem;
+      font-size: 1.2rem;
+      background: linear-gradient(
+        to right bottom,
+        rgba(255, 255, 255, 0.7),
+        rgba(255, 255, 255, 0.3)
+      );
+      outline: none;
+
+      &:focus {
+        box-shadow: 0 0 1rem 0 #fff7;
+      }
+
+      &:not(:first-child) {
+        margin-top: 1rem;
+      }
+    }
+  }
   .content {
     margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    .search {
-      input {
-        width: 100%;
-        padding: 1rem 2rem;
-        border: none;
-        border-radius: 3rem;
-        font-size: 1.2rem;
-        background: linear-gradient(
-          to right bottom,
-          rgba(255, 255, 255, 0.7),
-          rgba(255, 255, 255, 0.3)
-        );
-        outline: none;
-
-        &:focus {
-          box-shadow: 0 0 1rem 0 #fff7;
-        }
-
-        &:not(:first-child) {
-          margin-top: 1rem;
-        }
-      }
-    }
-    .list {
-      margin-top: 2rem;
-      .list-item {
-        display: block;
-        text-decoration: none;
-        width: 100%;
-        background: linear-gradient(to top right, #fff7, #fffc);
-        border-radius: 1rem;
-        padding: 1rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-
-        .infos {
-          color: black;
-          .title {
-            font-size: 1.5rem;
-          }
-        }
-
-        .stats {
-          margin-left: auto;
-          display: flex;
-          align-items: center;
-          background: #fff;
-          padding: 0.5rem;
-          border-radius: 0.7rem;
-
-          span {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-top: 2px;
-            color: #555;
-          }
-
-          svg {
-            margin-left: 0.5rem;
-            margin-bottom: 2px;
-            fill: #555;
-          }
-        }
-
-        &:hover {
-          box-shadow: 0 0 10px #fff;
-        }
-        &:not(:last-child) {
-          margin-bottom: 1rem;
-        }
-      }
-    }
+    flex: 1;
+    overflow: auto;
   }
 }
 </style>

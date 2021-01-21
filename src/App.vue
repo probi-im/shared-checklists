@@ -15,6 +15,12 @@ import Sidebar from "@/components/Sidebar.vue";
 export default defineComponent({
   name: "App",
   components: { Sidebar },
+  mounted() {
+    // store.dispatch("login", {
+    //   email: "test@test.com",
+    //   password: "testmdp",
+    // });
+  },
   unmounted() {
     store.commit("stopFirebaseListeners");
   },
@@ -57,6 +63,7 @@ main {
   .container {
     flex: 1;
     padding: 3rem;
+    // overflow: auto;
   }
 }
 
@@ -84,21 +91,13 @@ button.custom-button {
   background-color: transparent;
 
   span {
-    background: linear-gradient(
-      -45deg,
-      hsl(283, 90%, 67%),
-      hsl(236, 100%, 65%)
-    );
+    background: linear-gradient(-45deg, hsl(283, 90%, 67%), hsl(236, 100%, 65%));
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   &:hover {
-    background: linear-gradient(
-      -45deg,
-      hsla(283, 90%, 67%, 0.15),
-      hsl(236, 100%, 65%, 0.15)
-    );
+    background: linear-gradient(-45deg, hsla(283, 90%, 67%, 0.15), hsl(236, 100%, 65%, 0.15));
   }
 
   &.icon {
@@ -109,11 +108,7 @@ button.custom-button {
   &.fill {
     color: rgb(236, 226, 255);
     border: none;
-    background: linear-gradient(
-      -45deg,
-      hsl(283, 90%, 67%),
-      hsl(236, 100%, 65%)
-    );
+    background: linear-gradient(-45deg, hsl(283, 90%, 67%), hsl(236, 100%, 65%));
     padding: 12px 17px;
 
     span {
@@ -123,11 +118,7 @@ button.custom-button {
     }
 
     &:hover {
-      background: linear-gradient(
-        -45deg,
-        hsl(283, 56%, 57%),
-        hsl(236, 69%, 53%)
-      );
+      background: linear-gradient(-45deg, hsl(283, 56%, 57%), hsl(236, 69%, 53%));
     }
   }
 }

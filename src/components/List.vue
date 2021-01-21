@@ -10,8 +10,8 @@
       }"
     >
       <div class="infos">
-        <div class="title">{{ item.title }}</div>
-        <div class="subtitle">{{ item.subtitle }}</div>
+        <div class="title">{{ item.name }}</div>
+        <div class="subtitle">{{ item.desc }}</div>
       </div>
       <div class="stats">
         <span>{{ item.people }}</span>
@@ -57,15 +57,13 @@ export default defineComponent({
     const filteredItems = computed(() =>
       props.items.filter((i: any) =>
         props.filterAttributName
-          ? i[props.filterAttributName]
-              .toLowerCase()
-              .includes(props.filterString.toLowerCase())
+          ? i[props.filterAttributName].toLowerCase().includes(props.filterString.toLowerCase())
           : props.items
       )
     );
 
     return {
-      items: props.items,
+      items: computed(() => props.items),
       keyAttributName: props.keyAttributName,
       toRouteName: props.toRouteName,
     };
@@ -75,7 +73,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .list {
-  margin-top: 2rem;
   .list-item {
     display: block;
     text-decoration: none;

@@ -60,9 +60,10 @@ import { useStore, Store } from "vuex";
 import { useRoute } from "vue-router";
 import router from "@/router";
 import * as fb from "../firebase";
-import { Checklist, State } from "@/store";
+import { State } from "@/store";
 import Dialog from "@/components/Dialog.vue";
 import { v4 as uuid4 } from "uuid";
+import { Checklist } from "@/models/checklist";
 
 export default defineComponent({
   name: "Checklist",

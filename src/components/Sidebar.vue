@@ -43,22 +43,27 @@ export default defineComponent({
       {
         title: "Public Checklists",
         icon: "todo-list",
-        to: "/public",
+        to: { name: "public-checklists" },
         requireAuth: false,
       },
       {
         title: "My Checklists",
         icon: "todo-list",
-        to: "/private",
+        to: { name: "private-checklists" },
         requireAuth: false,
       },
       {
         title: "Settings",
         icon: "settings",
-        to: "/settings",
+        to: { name: "settings" },
         requireAuth: true,
       },
-      { title: "About", icon: "about", to: "/about", requireAuth: false },
+      {
+        title: "About",
+        icon: "about",
+        to: { name: "about" },
+        requireAuth: false,
+      },
     ]);
     // const filteredNavItems = computed(() => navItems.value.filter(i => i.))
     return {

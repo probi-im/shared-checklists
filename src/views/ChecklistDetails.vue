@@ -1,7 +1,15 @@
 <template>
-  <div class="checklist-details">
+  <div v-if="loadingChecklist" class="loadin">Loading checklist details...</div>
+  <div v-else class="checklist-details">
     <div class="header">
-      <div class="title">Checklist details</div>
+      <div class="title">
+        <button class="icon" @click="$router.back()"><Icon :name="'arrow'" /></button>
+        {{ checklist.name }}
+      </div>
+      <div class="subtitle">
+        {{ checklist.items.length }} items ({{ checklist.items.filter((i) => !i.done).length }}
+        left)
+      </div>
     </div>
     <div class="content">
       <div class="search">
@@ -16,8 +24,10 @@
           @click="toggleItem(item.id)"
         >
           <div class="infos">
-            <div class="title">{{ item.title }}</div>
-            <div class="subtitle">{{ item.createdAt }}</div>
+            <div class="title">{{ item.title || item.text }}</div>
+            <div class="subtitle">
+              {{ formattedDate(item.createdOn.seconds * 1000) }}
+            </div>
           </div>
           <div class="stats">
             <Icon v-if="item.done" :name="'checkbox_filled'" />
@@ -30,8 +40,13 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
+import { format } from "date-fns";
 import Icon from "@/components/Icon.vue";
+import { useRoute } from "vue-router";
+import router from "@/router";
+import { getChecklistFromId } from "@/services/checklistService";
+import { Checklist } from "@/models/checklist";
 
 export default defineComponent({
   name: "ChecklistDetails",
@@ -39,55 +54,55 @@ export default defineComponent({
     Icon,
   },
   setup() {
+    const route = useRoute();
+
+    const checklist = ref<Checklist>();
+    const loadingChecklist = ref(true);
+
     const searchQuery = ref("");
-    const items = ref([
-      {
-        id: "0",
-        title: "First item",
-        done: false,
-        createdAt: Date.now(),
-      },
-      {
-        id: "1",
-        title: "Second item",
-        done: true,
-        createdAt: Date.now() + 1000,
-      },
-      {
-        id: "2",
-        title: "Third item",
-        done: false,
-        createdAt: Date.now() + 2000,
-      },
-    ]);
 
     const filteredItems = computed(() =>
-      items.value
-        .filter((c) =>
-          c.title.toLowerCase().includes(searchQuery.value.toLowerCase())
-        )
-        // sorting by creation date
-        .sort((a, b) => {
-          return a.createdAt > b.createdAt
-            ? 1
-            : a.createdAt < b.createdAt
-            ? -1
-            : 0;
-        })
-        // sorting by item state
-        .sort((a, b) => {
-          return a.done && b.done ? 0 : a.done ? 1 : -1;
-        })
+      checklist.value?.items
+        ? checklist.value.items
+            .filter((c) => c.text.toLowerCase().includes(searchQuery.value.toLowerCase()))
+            // sorting by creation date
+            .sort((a, b) => {
+              return a.createdOn > b.createdOn ? 1 : a.createdOn < b.createdOn ? -1 : 0;
+            })
+            // sorting by item state
+            .sort((a, b) => {
+              return a.done && b.done ? 0 : a.done ? 1 : -1;
+            })
+        : []
     );
 
     const toggleItem = (itemId: string) => {
-      const item = items.value.find((i) => i.id === itemId);
+      if (!checklist.value) return;
+      const item = checklist.value.items.find((i) => i.id === itemId);
       if (!item) return;
       item.done = !item.done;
     };
 
+    const formattedDate = (dateTimestamp: number) => {
+      return format(dateTimestamp, "dd-MM-yyyy HH:mm");
+    };
+
+    onMounted(async () => {
+      const checklistId = route.params.checklistId;
+
+      if (!checklistId || checklistId === "" || checklistId.length === 0) return;
+
+      const checklistResult = await getChecklistFromId(checklistId as string);
+      if (!checklistResult) return;
+      checklist.value = checklistResult;
+      loadingChecklist.value = false;
+    });
+
     return {
+      checklist,
       filteredItems,
+      formattedDate,
+      loadingChecklist,
       searchQuery,
       toggleItem,
     };
@@ -99,12 +114,34 @@ export default defineComponent({
 .checklist-details {
   .header {
     .title {
+      display: flex;
+      align-items: center;
       font-size: 2.5rem;
       font-weight: bold;
+      text-transform: uppercase;
+
+      button {
+        margin-right: 1rem;
+        border: 2px solid #261d9f;
+        border-radius: 40px;
+        height: 40px;
+        width: 40px;
+        display: grid;
+        place-content: center;
+        outline: none;
+        cursor: pointer;
+
+        svg {
+          transform: rotate(180deg);
+          margin-left: -3px;
+          fill: #261d9f;
+        }
+      }
     }
-    // .subtitle {
-    //   font-size: 1.5rem;
-    // }
+    .subtitle {
+      font-size: 1.5rem;
+      margin-top: 0.3rem;
+    }
   }
   .content {
     margin-top: 2rem;
@@ -148,35 +185,40 @@ export default defineComponent({
         align-items: center;
 
         .infos {
-          color: black;
           .title {
+            color: #141b55;
             font-size: 1.5rem;
+          }
+          .subtitle {
+            color: grey;
           }
         }
 
         .stats {
           margin-left: auto;
-          display: flex;
-          align-items: center;
-          // background: #fff;
-          padding: 0.5rem;
-          border-radius: 0.7rem;
-
-          span {
-            font-size: 1.1rem;
-            font-weight: bold;
-            margin-top: 2px;
-            color: #555;
-          }
 
           svg {
-            margin-bottom: 2px;
             fill: #555;
           }
         }
 
         &.done {
           background: linear-gradient(to top right, #fff5, #fff8);
+
+          .infos {
+            .title {
+              color: #141b5599;
+            }
+            .subtitle {
+              color: #80808099;
+            }
+          }
+
+          .stats {
+            svg {
+              fill: #55555599;
+            }
+          }
         }
         &:hover {
           box-shadow: 0 0 10px #fff;

@@ -2,21 +2,8 @@ import { createStore } from 'vuex'
 import * as fb from '../firebase';
 import router from '@/router';
 import firebase from 'firebase/app';
-
-export interface Item {
-  id: string,
-  text: string,
-  done: boolean,
-  createdOn: Date
-}
-
-export interface Checklist {
-  id: string,
-  name: string,
-  items: Item[],
-  allowedUsers: string[],
-  createdOn: Date
-}
+import { Checklist } from '@/models/checklist';
+import { Item } from '@/models/item';
 
 export interface State {
   checklists: Checklist[],
@@ -42,12 +29,13 @@ const store = createStore<State>({
     initializeFirebaseListeners(state) {
       if (!state.user || !state.user.id) return;
       state.collectionsListenerUnsubscribe = fb.checklistsCollection.where('allowedUsers', 'array-contains', state.user.id ? state.user.id : 'invalid_userid').orderBy('createdOn', 'desc').onSnapshot(async snapshot => {
-        let checklists: any[] = [];
+        let checklists: Checklist[] = [];
 
         for (const doc of snapshot.docs) {
-          let checklist = doc.data();
+          let checklist: Checklist = doc.data() as Checklist;
+          checklist.people  = checklist.allowedUsers.length;
           checklist.id = doc.id;
-          checklists.push(checklist);
+          checklists.push(checklist as Checklist);
         }
 
         store.commit('setChecklists', checklists);

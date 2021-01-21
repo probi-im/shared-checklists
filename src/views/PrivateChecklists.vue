@@ -9,7 +9,11 @@
       <input type="text" placeholder="Search" v-model.trim="searchQuery" />
     </div>
     <div class="content">
-      <List :items="filteredChecklists" :toRouteName="'private-checklist-details'" />
+      <List
+        :items="filteredChecklists"
+        :toRouteName="'private-checklist-details'"
+        @list-updated="updateChecklists"
+      />
     </div>
   </div>
 </template>
@@ -63,10 +67,18 @@ export default defineComponent({
     );
     const user = computed(() => store.state.user);
 
-    onMounted(async () => {
+    const updateChecklists = async () => {
+      loadingChecklists.value = true;
       if (!store.state.user) return;
       checklists.value = await getPrivateChecklistsFromUserId(store.state.user.id);
       loadingChecklists.value = false;
+    };
+
+    onMounted(async () => {
+      await updateChecklists();
+      // if (!store.state.user) return;
+      // checklists.value = await getPrivateChecklistsFromUserId(store.state.user.id);
+      // loadingChecklists.value = false;
     });
 
     return {
@@ -74,6 +86,7 @@ export default defineComponent({
       checklists,
       filteredChecklists,
       loadingChecklists,
+      updateChecklists,
       user,
     };
   },

@@ -167,7 +167,7 @@ const store = createStore<State>({
             displayName: user.displayName,
             photoUrl: user.photoURL
           });
-          commit("initializeFirebaseListeners");
+          // commit("initializeFirebaseListeners");
           router.push("home");
         }
       } catch (e) {
@@ -185,7 +185,7 @@ const store = createStore<State>({
             displayName: user.displayName,
             photoUrl: user.photoURL
           });
-          commit("initializeFirebaseListeners");
+          // commit("initializeFirebaseListeners");
           router.push("home");
         }
       } catch (e) {

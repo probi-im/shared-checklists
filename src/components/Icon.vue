@@ -20,6 +20,15 @@
     <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
   </svg>
   <svg
+    v-else-if="name === 'add'"
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
+    <path d="M24 10h-10v-10h-4v10h-10v4h10v10h4v-10h10z" />
+  </svg>
+  <svg
     v-else-if="name === 'edit'"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
@@ -32,7 +41,18 @@
     />
   </svg>
   <svg
-    v-else-if="name === 'delete'"
+    v-else-if="name === 'trash'"
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
+    <path
+      d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.315c0 .901.73 2 1.631 2h5.712z"
+    />
+  </svg>
+  <svg
+    v-else-if="name === 'delete_bin'"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
     width="24px"
@@ -40,6 +60,17 @@
   >
     <path d="M0 0h24v24H0z" fill="none" />
     <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+  </svg>
+  <svg
+    v-else-if="name === 'delete'"
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+  >
+    <path
+      d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"
+    />
   </svg>
   <svg
     v-else-if="name === 'checkbox_filled'"

@@ -9,7 +9,11 @@
       <input type="text" placeholder="Search" v-model.trim="searchQuery" />
     </div>
     <div class="content">
-      <List :items="filteredChecklists" :toRouteName="'public-checklist-details'" />
+      <List
+        :items="filteredChecklists"
+        :toRouteName="'public-checklist-details'"
+        @list-updated="updateChecklists"
+      />
     </div>
   </div>
 </template>
@@ -43,15 +47,21 @@ export default defineComponent({
         })
     );
 
-    onMounted(async () => {
+    const updateChecklists = async () => {
+      loadingChecklists.value = true;
       checklists.value = await getPublicChecklists();
       loadingChecklists.value = false;
+    };
+
+    onMounted(async () => {
+      await updateChecklists();
     });
 
     return {
       searchQuery,
       filteredChecklists,
       loadingChecklists,
+      updateChecklists,
     };
   },
 });

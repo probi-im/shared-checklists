@@ -1,10 +1,11 @@
 import { Checklist } from "@/models/checklist";
+import firebase from "firebase/app";
 import * as fb from "../firebase";
 
 function docToChecklist(
   doc:
-    | firebase.default.firestore.QueryDocumentSnapshot<firebase.default.firestore.DocumentData>
-    | firebase.default.firestore.DocumentSnapshot<firebase.default.firestore.DocumentData>
+    | firebase.firestore.QueryDocumentSnapshot<firebase.firestore.DocumentData>
+    | firebase.firestore.DocumentSnapshot<firebase.firestore.DocumentData>
 ): Checklist {
   return {
     ...(doc.data() as Checklist),
@@ -38,4 +39,20 @@ export async function getChecklistFromId(checklistId: string): Promise<Checklist
   if (!doc.exists) return null;
 
   return docToChecklist(doc);
+}
+
+export async function deleteChecklist(checklistId: string) {
+  await fb.checklistsCollection.doc(checklistId).delete();
+}
+
+export async function leaveChecklist(checklistId: string, userId: string) {
+  await fb.checklistsCollection
+    .doc(checklistId)
+    .update({ allowedUsers: firebase.firestore.FieldValue.arrayRemove(userId) });
+}
+
+export async function joinChecklist(checklistId: string, userId: string) {
+  await fb.checklistsCollection
+    .doc(checklistId)
+    .update({ allowedUsers: firebase.firestore.FieldValue.arrayUnion(userId) });
 }

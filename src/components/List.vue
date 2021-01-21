@@ -9,7 +9,7 @@
         params: { checklistId: item.id },
       }"
     >
-      <div v-if="item.status === 'public' || item.createdBy" class="flags">
+      <div class="flags">
         <div v-if="item.status === 'public'" class="icon" title="This checklist is public">
           <Icon :name="'public'" />
         </div>
@@ -28,6 +28,27 @@
         <div class="title">{{ item.name }}</div>
         <div class="subtitle">{{ item.desc }}</div>
       </div>
+      <div class="actions">
+        <button
+          title="Delete this checklist"
+          v-if="item.createdBy === user.id"
+          @click.prevent="del(item.id)"
+          class="warn"
+        >
+          <Icon :name="'trash'" />
+        </button>
+        <button
+          title="Leave this checklist"
+          v-else-if="item.allowedUsers.includes(user.id)"
+          @click.prevent="leave(item.id)"
+          class="warn"
+        >
+          <Icon :name="'delete'" />
+        </button>
+        <button title="Join this checklist" v-else @click.prevent="add(item.id)">
+          <Icon :name="'add'" />
+        </button>
+      </div>
       <div class="stats">
         <span>{{ item.people }}</span>
         <Icon :name="'person'" />
@@ -41,6 +62,7 @@ import { computed, defineComponent } from "vue";
 import Icon from "@/components/Icon.vue";
 import { useStore } from "vuex";
 import { State } from "@/store";
+import { deleteChecklist, joinChecklist, leaveChecklist } from "@/services/checklistService";
 export default defineComponent({
   name: "List",
   components: {
@@ -70,8 +92,11 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props) {
+  emits: ["listUpdated"],
+  setup(props, { emit }) {
     const store = useStore<State>();
+    const user = computed(() => store.state.user);
+
     const filteredItems = computed(() =>
       props.items.filter((i: any) =>
         props.filterAttributName
@@ -80,11 +105,35 @@ export default defineComponent({
       )
     );
 
+    const leave = async (checklistId: string) => {
+      if (!user.value) return;
+      // console.log("leave checklist request", checklistId);
+      await leaveChecklist(checklistId, user.value.id);
+      emit("listUpdated");
+    };
+
+    const del = async (checklistId: string) => {
+      if (!user.value) return;
+      // console.log("delete checklist request", checklistId);
+      await deleteChecklist(checklistId);
+      emit("listUpdated");
+    };
+
+    const add = async (checklistId: string) => {
+      if (!user.value) return;
+      // console.log("add checklist request", checklistId);
+      await joinChecklist(checklistId, user.value.id);
+      emit("listUpdated");
+    };
+
     return {
+      add,
+      del,
       items: computed(() => props.items),
       keyAttributName: props.keyAttributName,
+      leave,
       toRouteName: props.toRouteName,
-      user: computed(() => store.state.user),
+      user,
     };
   },
 });
@@ -94,7 +143,6 @@ export default defineComponent({
 .list {
   padding: 1rem;
   .list-item {
-    display: block;
     text-decoration: none;
     width: 100%;
     background: linear-gradient(to top right, #fff7, #fffc);
@@ -125,6 +173,34 @@ export default defineComponent({
       }
     }
 
+    .actions {
+      margin-left: auto;
+      display: none;
+      opacity: 0;
+      place-content: center;
+
+      button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        svg {
+          fill: darkgrey;
+        }
+
+        &:hover {
+          svg {
+            fill: blue;
+          }
+          &.warn {
+            svg {
+              fill: red;
+            }
+          }
+        }
+      }
+    }
+
     .stats {
       margin-left: auto;
       display: flex;
@@ -149,6 +225,13 @@ export default defineComponent({
 
     &:hover {
       box-shadow: 0 0 10px #fff;
+      .actions {
+        display: grid;
+        opacity: 1;
+      }
+      .stats {
+        margin-left: 0.8rem;
+      }
     }
     &:not(:last-child) {
       margin-bottom: 1rem;

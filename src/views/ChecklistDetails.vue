@@ -11,13 +11,13 @@
         left)
       </div>
     </div>
-    <div class="add-div">
+    <div class="search">
+      <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
+    </div>
+    <div v-if="user && checklist.allowedUsers.includes(user.id)" class="add-div">
       <router-link :to="{ name: 'new-item', params: { checklistId: checklist.id } }"
         ><Icon :name="'add'"
       /></router-link>
-    </div>
-    <div class="search">
-      <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
     <div class="content">
       <div class="list">
@@ -179,7 +179,11 @@ export default defineComponent({
       margin-top: 0.3rem;
     }
   }
+  .search {
+    margin-top: 2rem;
+  }
   .add-div {
+    margin-top: 1rem;
     display: flex;
     justify-content: flex-end;
     a {
@@ -205,13 +209,10 @@ export default defineComponent({
       }
     }
   }
-  .search {
-    margin-top: 1rem;
-  }
   .content {
     flex: 1;
     overflow: auto;
-    margin-top: 2rem;
+    margin-top: 1rem;
     display: flex;
     flex-direction: column;
     .list {

@@ -29,6 +29,9 @@
         <div class="subtitle">{{ item.desc }}</div>
       </div>
       <div class="actions">
+        <button title="Edit this checklist" v-if="user && user.id === item.createdBy">
+          <Icon :name="'edit'" />
+        </button>
         <button
           title="Delete this checklist"
           v-if="user && user.id === item.createdBy"
@@ -177,7 +180,7 @@ export default defineComponent({
       margin-left: auto;
       display: none;
       opacity: 0;
-      place-content: center;
+      align-items: center;
 
       button {
         background: none;
@@ -197,6 +200,9 @@ export default defineComponent({
               fill: red;
             }
           }
+        }
+        &:not(:last-child) {
+          margin-right: 1rem;
         }
       }
     }
@@ -226,7 +232,7 @@ export default defineComponent({
     &:hover {
       box-shadow: 0 0 10px #fff;
       .actions {
-        display: grid;
+        display: flex;
         opacity: 1;
       }
       .stats {

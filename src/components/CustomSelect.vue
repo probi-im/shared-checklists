@@ -1,29 +1,26 @@
 <template>
-  <input
-    class="custom-input"
-    :type="type"
-    :placeholder="placeholder"
-    :required="required"
+  <select
+    class="custom-select"
     :value="modelValue"
     @input="$emit('update:modelValue', $event.target.value)"
-  />
+    :required="required"
+  >
+    <option v-for="option in options" :key="option.value" :value="option.value">
+      {{ option.label }}
+    </option>
+  </select>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Custom Input",
+  name: "Custom Select",
   props: {
     modelValue: String,
-    type: {
-      type: String,
-      default: "text",
-      validate: (i) => ["text", "email", "password"].includes(i),
-    },
-    placeholder: {
-      type: String,
-      default: "",
+    options: {
+      type: Array,
+      required: true,
     },
     required: {
       type: Boolean,
@@ -36,11 +33,11 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-input.custom-input {
+select.custom-select {
   width: 100%;
   padding: 1rem 2rem;
   border: none;
-  border-radius: 3rem;
+  border-radius: 2rem;
   font-size: 1.2rem;
   background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
   outline: none;

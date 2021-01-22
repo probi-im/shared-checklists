@@ -8,10 +8,14 @@
       <form @submit.prevent="create">
         <CustomInput :placeholder="'Checklist name'" v-model.trim="checklistName" required />
         <CustomInput :placeholder="'Checklist description'" v-model.trim="checklistDesc" required />
-        <select name="checklistStatus" id="checklistStatus" v-model="checklistStatus" required>
-          <option value="public">Public</option>
-          <option value="private">Private</option>
-        </select>
+        <CustomSelect
+          v-model.trim="checklistStatus"
+          :options="[
+            { value: 'public', label: 'Public' },
+            { value: 'private', label: 'Private' },
+          ]"
+          required
+        />
         <button type="submit"><span>Create</span></button>
       </form>
     </div>
@@ -25,10 +29,11 @@ import { computed, defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import CustomInput from "@/components/CustomInput.vue";
+import CustomSelect from "@/components/CustomSelect.vue";
 
 export default defineComponent({
   name: "New Checklist",
-  components: { CustomInput },
+  components: { CustomInput, CustomSelect },
   setup() {
     const store = useStore<State>();
     const router = useRouter();
@@ -86,28 +91,6 @@ export default defineComponent({
       display: flex;
       flex-direction: column;
       align-items: center;
-
-      select {
-        width: 100%;
-        padding: 0.8rem 1rem;
-        border: none;
-        border-radius: 2rem;
-        font-size: 1.2rem;
-        background: linear-gradient(
-          to right bottom,
-          rgba(255, 255, 255, 0.7),
-          rgba(255, 255, 255, 0.3)
-        );
-        outline: none;
-
-        &:focus {
-          box-shadow: 0 0 1rem 0 #fff7;
-        }
-
-        &:not(:first-child) {
-          margin-top: 1rem;
-        }
-      }
 
       button {
         margin: 2rem 0;

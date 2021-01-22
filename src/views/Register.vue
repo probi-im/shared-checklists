@@ -1,47 +1,39 @@
 <template>
   <div class="register">
     <div class="header"><h1>Register</h1></div>
-    <form @submit.prevent="register">
-      <input
-        v-model.trim="email"
-        type="email"
-        name="email"
-        id="email"
-        placeholder="Email address"
-        required
-      />
-      <input
-        v-model.trim="password"
-        type="password"
-        name="password"
-        id="password"
-        placeholder="Password"
-        required
-      />
-      <input
-        v-model.trim="passwordConfirmation"
-        type="password"
-        name="passwordConfirmation"
-        id="passwordConfirmation"
-        placeholder="Password confirmation"
-        required
-      />
-      <button type="submit"><span>Register</span></button>
-      <h3>
-        Already have an account ?
-        <router-link to="login">Log in here</router-link>
-      </h3>
-    </form>
+    <div class="content">
+      <form @submit.prevent="register">
+        <CustomInput :type="'email'" :placeholder="'Email address'" v-model.trim="email" required />
+        <CustomInput
+          :type="'password'"
+          :placeholder="'Password'"
+          v-model.trim="password"
+          required
+        />
+        <CustomInput
+          :type="'password'"
+          :placeholder="'Password confirmation'"
+          v-model.trim="passwordConfirmation"
+          required
+        />
+        <button type="submit"><span>Register</span></button>
+        <h3>
+          Already have an account ?
+          <router-link to="login">Log in here</router-link>
+        </h3>
+      </form>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
+import CustomInput from "@/components/CustomInput.vue";
 
 export default defineComponent({
   name: "Register",
-  components: {},
+  components: { CustomInput },
   setup() {
     const store = useStore();
 
@@ -78,60 +70,42 @@ export default defineComponent({
     text-transform: uppercase;
   }
 }
-form {
-  margin-top: 25px;
-  width: 100%;
+.content {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  input {
+  justify-content: center;
+  form {
+    margin-top: 25px;
     width: 100%;
     max-width: 60%;
-    padding: 0.8rem 1rem;
-    border: none;
-    border-radius: 2rem;
-    font-size: 1.2rem;
-    background: linear-gradient(
-      to right bottom,
-      rgba(255, 255, 255, 0.7),
-      rgba(255, 255, 255, 0.3)
-    );
-    outline: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-    &:focus {
-      box-shadow: 0 0 1rem 0 #fff7;
+    button {
+      margin: 2rem 0;
+      padding: 0.8rem 1rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      width: auto;
+      color: white;
+      border: none;
+      border-radius: 0.8rem;
+      cursor: pointer;
+      outline: none;
+      background: linear-gradient(to bottom left, #00aeff, #67bacf);
+      transition: 0.15s opacity ease;
+
+      &:hover {
+        opacity: 0.7;
+      }
     }
 
-    &:not(:first-child) {
-      margin-top: 1rem;
-    }
-  }
-
-  button {
-    margin: 2rem 0;
-    padding: 0.8rem 1rem;
-    font-size: 1.3rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    width: auto;
-    color: white;
-    border: none;
-    border-radius: 0.8rem;
-    cursor: pointer;
-    outline: none;
-    background: linear-gradient(to bottom left, #00aeff, #67bacf);
-    transition: 0.15s opacity ease;
-
-    &:hover {
-      opacity: 0.7;
-    }
-  }
-
-  h3 {
-    a {
-      text-decoration: none;
-      color: #3d9acf;
+    h3 {
+      a {
+        text-decoration: none;
+        color: #3d9acf;
+      }
     }
   }
 }

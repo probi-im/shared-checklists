@@ -6,7 +6,7 @@
       <div class="subtitle">List of your private checklists</div>
     </div>
     <div class="search">
-      <input type="text" placeholder="Search" v-model.trim="searchQuery" />
+      <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
     <div class="content">
       <List
@@ -22,7 +22,7 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { useStore, Store } from "vuex";
 import { State } from "@/store";
-// import Icon from "@/components/Icon.vue";
+import CustomInput from "@/components/CustomInput.vue";
 import List from "@/components/List.vue";
 import { getPrivateChecklistsFromUserId } from "@/services/checklistService";
 import { Checklist } from "@/models/checklist";
@@ -30,26 +30,12 @@ import { Checklist } from "@/models/checklist";
 export default defineComponent({
   name: "Private Checklists",
   components: {
-    // Icon,
+    CustomInput,
     List,
   },
   setup() {
     const store: Store<State> = useStore();
     const searchQuery = ref("");
-    // const checklists = ref([
-    //   {
-    //     id: "0",
-    //     title: "First checklist",
-    //     subtitle: "This is a shopping list",
-    //     people: 9,
-    //   },
-    //   {
-    //     id: "1",
-    //     title: "Second checklist",
-    //     subtitle: "This is a todo list",
-    //     people: 7,
-    //   },
-    // ]);
 
     const checklists = ref<Checklist[]>();
     const loadingChecklists = ref(true);
@@ -76,9 +62,6 @@ export default defineComponent({
 
     onMounted(async () => {
       await updateChecklists();
-      // if (!store.state.user) return;
-      // checklists.value = await getPrivateChecklistsFromUserId(store.state.user.id);
-      // loadingChecklists.value = false;
     });
 
     return {
@@ -109,27 +92,6 @@ export default defineComponent({
   }
   .search {
     margin-top: 2rem;
-    input {
-      width: 100%;
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 3rem;
-      font-size: 1.2rem;
-      background: linear-gradient(
-        to right bottom,
-        rgba(255, 255, 255, 0.7),
-        rgba(255, 255, 255, 0.3)
-      );
-      outline: none;
-
-      &:focus {
-        box-shadow: 0 0 1rem 0 #fff7;
-      }
-
-      &:not(:first-child) {
-        margin-top: 1rem;
-      }
-    }
   }
   .content {
     margin-top: 2rem;

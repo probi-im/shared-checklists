@@ -6,7 +6,7 @@
       <div class="subtitle">List of public checklists available to everyone</div>
     </div>
     <div class="search">
-      <input type="text" placeholder="Search" v-model.trim="searchQuery" />
+      <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
     <div class="content">
       <List
@@ -21,12 +21,14 @@
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
 import List from "@/components/List.vue";
+import CustomInput from "@/components/CustomInput.vue";
 import { getPublicChecklists } from "@/services/checklistService";
 import { Checklist } from "@/models/checklist";
 
 export default defineComponent({
   name: "Public Checklists",
   components: {
+    CustomInput,
     List,
   },
   setup() {
@@ -83,27 +85,6 @@ export default defineComponent({
   }
   .search {
     margin-top: 2rem;
-    input {
-      width: 100%;
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 3rem;
-      font-size: 1.2rem;
-      background: linear-gradient(
-        to right bottom,
-        rgba(255, 255, 255, 0.7),
-        rgba(255, 255, 255, 0.3)
-      );
-      outline: none;
-
-      &:focus {
-        box-shadow: 0 0 1rem 0 #fff7;
-      }
-
-      &:not(:first-child) {
-        margin-top: 1rem;
-      }
-    }
   }
   .content {
     margin-top: 2rem;

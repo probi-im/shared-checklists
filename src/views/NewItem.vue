@@ -6,14 +6,7 @@
     </div>
     <div class="content">
       <form @submit.prevent="add">
-        <input
-          v-model.trim="itemName"
-          type="text"
-          name="itemName"
-          id="itemName"
-          placeholder="Item name"
-          required
-        />
+        <CustomInput :placeholder="'Item name'" v-model.trim="itemName" required />
         <button type="submit"><span>Add</span></button>
       </form>
     </div>
@@ -28,10 +21,11 @@ import { computed, defineComponent, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { v4 as uuid4 } from "uuid";
+import CustomInput from "@/components/CustomInput.vue";
 
 export default defineComponent({
   name: "New Item",
-  components: {},
+  components: { CustomInput },
   setup() {
     const store = useStore<State>();
     const route = useRoute();
@@ -49,8 +43,7 @@ export default defineComponent({
       await addItemToChecklist(
         {
           id: uuid4(),
-          // createdBy: user.value.id,
-          createdBy: "",
+          createdBy: user.value.id,
           createdOn: new Date(),
           text: itemName.value,
           done: false,
@@ -98,54 +91,57 @@ export default defineComponent({
       font-size: 1.5rem;
     }
   }
-  form {
-    margin-top: 25px;
-    width: 100%;
+  .content {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    input,
-    select {
+    justify-content: center;
+    form {
+      margin-top: 25px;
       width: 100%;
       max-width: 60%;
-      padding: 0.8rem 1rem;
-      border: none;
-      border-radius: 2rem;
-      font-size: 1.2rem;
-      background: linear-gradient(
-        to right bottom,
-        rgba(255, 255, 255, 0.7),
-        rgba(255, 255, 255, 0.3)
-      );
-      outline: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-      &:focus {
-        box-shadow: 0 0 1rem 0 #fff7;
+      select {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: none;
+        border-radius: 2rem;
+        font-size: 1.2rem;
+        background: linear-gradient(
+          to right bottom,
+          rgba(255, 255, 255, 0.7),
+          rgba(255, 255, 255, 0.3)
+        );
+        outline: none;
+
+        &:focus {
+          box-shadow: 0 0 1rem 0 #fff7;
+        }
+
+        &:not(:first-child) {
+          margin-top: 1rem;
+        }
       }
 
-      &:not(:first-child) {
-        margin-top: 1rem;
-      }
-    }
+      button {
+        margin: 2rem 0;
+        padding: 0.8rem 1rem;
+        font-size: 1.3rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        width: auto;
+        color: white;
+        border: none;
+        border-radius: 0.8rem;
+        cursor: pointer;
+        outline: none;
+        background: linear-gradient(to bottom left, #00aeff, #67bacf);
+        transition: 0.15s opacity ease;
 
-    button {
-      margin: 2rem 0;
-      padding: 0.8rem 1rem;
-      font-size: 1.3rem;
-      font-weight: bold;
-      text-transform: uppercase;
-      width: auto;
-      color: white;
-      border: none;
-      border-radius: 0.8rem;
-      cursor: pointer;
-      outline: none;
-      background: linear-gradient(to bottom left, #00aeff, #67bacf);
-      transition: 0.15s opacity ease;
-
-      &:hover {
-        opacity: 0.7;
+        &:hover {
+          opacity: 0.7;
+        }
       }
     }
   }

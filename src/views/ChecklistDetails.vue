@@ -17,7 +17,7 @@
       /></router-link>
     </div>
     <div class="search">
-      <input type="text" placeholder="Search" v-model.trim="searchQuery" />
+      <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
     <div class="content">
       <div class="list">
@@ -64,10 +64,12 @@ import { deleteItem, getChecklistFromId, toggleItemState } from "@/services/chec
 import { Checklist } from "@/models/checklist";
 import { useStore } from "vuex";
 import { State } from "@/store";
+import CustomInput from "@/components/CustomInput.vue";
 
 export default defineComponent({
   name: "ChecklistDetails",
   components: {
+    CustomInput,
     Icon,
   },
   setup() {
@@ -181,7 +183,6 @@ export default defineComponent({
     display: flex;
     justify-content: flex-end;
     a {
-      margin: 0 0 1rem;
       padding: 0.8rem 1rem;
       font-size: 1.3rem;
       font-weight: bold;
@@ -205,28 +206,7 @@ export default defineComponent({
     }
   }
   .search {
-    width: 100%;
-    input {
-      width: 100%;
-      padding: 1rem 2rem;
-      border: none;
-      border-radius: 3rem;
-      font-size: 1.2rem;
-      background: linear-gradient(
-        to right bottom,
-        rgba(255, 255, 255, 0.7),
-        rgba(255, 255, 255, 0.3)
-      );
-      outline: none;
-
-      &:focus {
-        box-shadow: 0 0 1rem 0 #fff7;
-      }
-
-      &:not(:first-child) {
-        margin-top: 1rem;
-      }
-    }
+    margin-top: 1rem;
   }
   .content {
     flex: 1;

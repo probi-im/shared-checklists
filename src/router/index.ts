@@ -15,7 +15,7 @@ import { auth } from "@/firebase";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
-    redirect: "public-checklists"
+    redirect: "public"
   },
   {
     path: "/home",

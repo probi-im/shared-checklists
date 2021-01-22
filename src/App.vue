@@ -122,18 +122,18 @@ button.custom-button {
     }
   }
 }
-input[type="text"].custom-input {
-  width: 100%;
-  padding: 10px 15px;
-  border: 2px solid lightgray;
-  border-radius: 10px;
-  outline: none;
-  font-size: 1.2rem;
+// input[type="text"].custom-input {
+//   width: 100%;
+//   padding: 10px 15px;
+//   border: 2px solid lightgray;
+//   border-radius: 10px;
+//   outline: none;
+//   font-size: 1.2rem;
 
-  &:focus {
-    border-color: gray;
-  }
-}
+//   &:focus {
+//     border-color: gray;
+//   }
+// }
 
 @media (max-width: 700px) {
   #app {

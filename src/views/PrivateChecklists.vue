@@ -3,7 +3,7 @@
   <div v-else class="private-checklists">
     <div class="header">
       <div class="title">Private Checklists</div>
-      <div class="subtitle">List of your private checklists</div>
+      <!-- <div class="subtitle">List of your private checklists</div> -->
     </div>
     <div class="search">
       <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
@@ -77,24 +77,19 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/header.scss";
+
 .private-checklists {
   height: 100%;
   display: flex;
   flex-direction: column;
-  .header {
-    .title {
-      font-size: 2.5rem;
-      font-weight: bold;
-    }
-    .subtitle {
-      font-size: 1.5rem;
-    }
-  }
+
   .search {
-    margin-top: 2rem;
+    margin-top: 1rem;
+    padding: 0 1rem;
   }
+
   .content {
-    margin-top: 2rem;
     flex: 1;
     overflow: auto;
   }

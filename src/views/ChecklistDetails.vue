@@ -205,8 +205,10 @@ export default defineComponent({
     overflow: auto;
     display: flex;
     flex-direction: column;
+
     .list {
       padding: 1rem;
+
       .list-item {
         display: block;
         text-decoration: none;
@@ -225,6 +227,7 @@ export default defineComponent({
 
         .infos {
           margin-left: 1rem;
+
           .title {
             color: #141b55;
             font-size: 1.5rem;
@@ -245,6 +248,7 @@ export default defineComponent({
             border: none;
             cursor: pointer;
             outline: none;
+
             svg {
               fill: darkgrey;
             }
@@ -283,14 +287,17 @@ export default defineComponent({
             }
           }
         }
+
         &:not(.locked):hover {
           cursor: pointer;
           box-shadow: 0 0 10px #fff;
+
           .actions {
             display: flex;
             opacity: 1;
           }
         }
+
         &:not(:last-child) {
           margin-bottom: 1rem;
         }

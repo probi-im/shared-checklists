@@ -8,6 +8,7 @@ import Checklist from "../views/Checklist.vue";
 import NewChecklist from "../views/NewChecklist.vue";
 import NewItem from "../views/NewItem.vue";
 import EditChecklist from "../views/EditChecklist.vue";
+import EditItem from "../views/EditItem.vue";
 import Settings from "../views/Settings.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
@@ -66,6 +67,14 @@ const routes: Array<RouteRecordRaw> = [
     path: "/new-item/:checklistId",
     name: "new-item",
     component: NewItem,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/edit/:checklistId/item/:itemId",
+    name: "edit-item",
+    component: EditItem,
     meta: {
       requiresAuth: true
     }

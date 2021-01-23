@@ -49,7 +49,12 @@ export async function createChecklist(checklist: Checklist) {
 export async function updateChecklist(checklist: Checklist) {
   await fb.checklistsCollection
     .doc(checklist.id)
-    .update({ name: checklist.name, desc: checklist.desc || "", status: checklist.status });
+    .update({
+      name: checklist.name,
+      desc: checklist.desc || "",
+      status: checklist.status,
+      items: checklist.items
+    });
 }
 
 export async function deleteChecklist(checklistId: string) {

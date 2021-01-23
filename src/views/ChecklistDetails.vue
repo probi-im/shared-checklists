@@ -36,6 +36,18 @@
           </div>
           <div class="actions">
             <button
+              title="Edit this item"
+              v-if="user && user.id === item.createdBy"
+              @click.stop="
+                $router.push({
+                  name: 'edit-item',
+                  params: { checklistId: checklist.id, itemId: item.id },
+                })
+              "
+            >
+              <Icon :name="'edit'" />
+            </button>
+            <button
               v-if="user && checklist.allowedUsers.includes(user.id)"
               title="Delete this item"
               @click.stop="delItem(item.id)"
@@ -241,7 +253,7 @@ export default defineComponent({
           margin-left: auto;
           display: none;
           opacity: 0;
-          place-content: center;
+          align-items: center;
 
           button {
             background: none;
@@ -261,6 +273,9 @@ export default defineComponent({
                   fill: red;
                 }
               }
+            }
+            &:not(:last-child) {
+              margin-right: 1rem;
             }
           }
         }
@@ -295,7 +310,7 @@ export default defineComponent({
           cursor: pointer;
           box-shadow: 0 0 10px #fff;
           .actions {
-            display: grid;
+            display: flex;
             opacity: 1;
           }
           .stats {

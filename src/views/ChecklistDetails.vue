@@ -7,7 +7,9 @@
         {{ checklist.name }}
       </div>
       <div class="subtitle">
-        {{ checklist.items.length }} items ({{ checklist.items.filter((i) => !i.done).length }}
+        {{ checklist.items.length }} item{{ checklist.items.length > 1 ? "s" : "" }} ({{
+          checklist.items.filter((i) => !i.done).length
+        }}
         left)
       </div>
     </div>

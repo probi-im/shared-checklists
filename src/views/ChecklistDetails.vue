@@ -8,7 +8,15 @@
       <div class="title">
         {{ checklist.name }}
       </div>
-      <div class="actions"></div>
+      <div class="actions">
+        <button v-if="user && user.id === checklist.createdBy" class="warn">
+          <Icon :name="'trash'" />
+        </button>
+        <button v-else-if="user && checklist.allowedUsers.includes(user.id)" class="warn">
+          <Icon :name="'delete'" />
+        </button>
+        <button v-else><Icon :name="'add'" /></button>
+      </div>
     </div>
     <div class="search">
       <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
@@ -165,6 +173,18 @@ export default defineComponent({
   height: 100%;
   display: flex;
   flex-direction: column;
+
+  .header .actions {
+    button {
+      svg {
+        fill: blue;
+      }
+
+      &.warn svg {
+        fill: red;
+      }
+    }
+  }
 
   .search {
     margin-top: 1rem;

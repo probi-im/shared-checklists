@@ -26,7 +26,12 @@
       </div>
       <div class="infos">
         <div class="title">{{ item.name }}</div>
-        <div class="subtitle">{{ item.desc }}</div>
+        <div class="subtitle">
+          {{ item.items.length }} item{{ item.items.length > 1 ? "s" : "" }} ({{
+            item.items.filter((i) => !i.done).length
+          }}
+          left)
+        </div>
       </div>
       <div class="actions">
         <button
@@ -179,6 +184,10 @@ export default defineComponent({
       color: black;
       .title {
         font-size: 1.5rem;
+      }
+      .subtitle {
+        color: grey;
+        margin-top: 0.3rem;
       }
     }
 

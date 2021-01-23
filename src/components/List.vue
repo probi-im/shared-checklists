@@ -29,7 +29,13 @@
         <div class="subtitle">{{ item.desc }}</div>
       </div>
       <div class="actions">
-        <button title="Edit this checklist" v-if="user && user.id === item.createdBy">
+        <button
+          title="Edit this checklist"
+          v-if="user && user.id === item.createdBy"
+          @click.prevent="
+            $router.push({ name: 'edit-checklist', params: { checklistId: item.id } })
+          "
+        >
           <Icon :name="'edit'" />
         </button>
         <button

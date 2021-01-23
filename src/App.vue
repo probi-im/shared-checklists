@@ -8,19 +8,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import store from "@/store";
 import Sidebar from "@/components/Sidebar.vue";
 
 export default defineComponent({
   name: "App",
   components: { Sidebar },
-  mounted() {
-    // store.dispatch("login", {
-    //   email: "test@test.com",
-    //   password: "testmdp",
-    // });
-  },
   unmounted() {
     store.commit("stopFirebaseListeners");
   },
@@ -28,6 +22,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "@/assets/scss/constants.scss";
 *,
 *::before,
 *::after {
@@ -43,7 +38,7 @@ body {
 }
 
 body {
-  background: linear-gradient(to top right, #00aeff, #67bacf);
+  background: $default-gradient;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -51,9 +46,9 @@ body {
 
 main {
   display: flex;
-  background: linear-gradient(to top right, #fffa, #fff5);
+  background: $transparent-gradient;
   backdrop-filter: blur(1rem);
-  border-radius: 30px;
+  border-radius: 2rem;
   min-width: 1200px;
   width: 1200px;
   min-height: 700px;
@@ -62,21 +57,11 @@ main {
 
   .container {
     flex: 1;
-    padding: 3rem;
+    // padding: 3rem;
     // overflow: auto;
   }
 }
 
-.header {
-  color: #261d9f;
-  // display: flex;
-  // align-items: center;
-  .buttons {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-  }
-}
 button.custom-button {
   padding: 10px 15px;
   font-size: 1.3rem;

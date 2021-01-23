@@ -88,14 +88,15 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-$border-radius: 2rem;
+@import "@/assets/scss/constants.scss";
+
 .sidebar {
   width: 350px;
   height: 100%;
   display: flex;
   flex-direction: column;
   background: #fff6;
-  border-radius: $border-radius;
+  border-radius: $main-border-radius 0 0 $main-border-radius;
 
   .header {
     display: flex;

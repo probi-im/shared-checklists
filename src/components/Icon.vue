@@ -2,12 +2,13 @@
   <svg
     v-if="name === 'arrow'"
     xmlns="http://www.w3.org/2000/svg"
+    width="24"
     height="24"
     viewBox="0 0 24 24"
-    width="24"
   >
-    <path d="M0 0h24v24H0z" fill="none" />
-    <path d="M5.88 4.12L13.76 12l-7.88 7.88L8 22l10-10L8 2z" />
+    <path
+      d="M13.025 1l-2.847 2.828 6.176 6.176h-16.354v3.992h16.354l-6.176 6.176 2.847 2.828 10.975-11z"
+    />
   </svg>
   <svg
     v-else-if="name === 'plus'"

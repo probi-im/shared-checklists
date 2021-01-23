@@ -2,24 +2,25 @@
   <div v-if="loadingChecklist" class="loading">Loading checklist details...</div>
   <div v-else class="checklist-details">
     <div class="header">
+      <div class="leading">
+        <button class="back-button" @click="$router.back()"><Icon :name="'arrow'" /></button>
+      </div>
       <div class="title">
-        <button class="icon" @click="$router.back()"><Icon :name="'arrow'" /></button>
         {{ checklist.name }}
       </div>
-      <div class="subtitle">
-        {{ checklist.items.length }} item{{ checklist.items.length > 1 ? "s" : "" }} ({{
-          checklist.items.filter((i) => !i.done).length
-        }}
-        left)
-      </div>
+      <div class="actions"></div>
     </div>
     <div class="search">
       <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
     <div v-if="user && checklist.allowedUsers.includes(user.id)" class="add-div">
-      <router-link :to="{ name: 'new-item', params: { checklistId: checklist.id } }"
+      <CustomInput :placeholder="'New item name'" />
+      <button>
+        <Icon :name="'add'" />
+      </button>
+      <!-- <router-link :to="{ name: 'new-item', params: { checklistId: checklist.id } }"
         ><Icon :name="'add'"
-      /></router-link>
+      /></router-link> -->
     </div>
     <div class="content">
       <div class="list">
@@ -30,6 +31,10 @@
           :class="{ done: item.done, locked: !user || !checklist.allowedUsers.includes(user.id) }"
           @click="user && checklist.allowedUsers.includes(user.id) ? toggleItem(item.id) : ''"
         >
+          <div class="stats">
+            <Icon v-if="item.done" :name="'checkbox_filled'" />
+            <Icon v-else :name="'checkbox_empty'" />
+          </div>
           <div class="infos">
             <div class="title">{{ item.title || item.text }}</div>
             <div class="subtitle">
@@ -57,10 +62,6 @@
             >
               <Icon :name="'trash'" />
             </button>
-          </div>
-          <div class="stats">
-            <Icon v-if="item.done" :name="'checkbox_filled'" />
-            <Icon v-else :name="'checkbox_empty'" />
           </div>
         </div>
       </div>
@@ -127,7 +128,6 @@ export default defineComponent({
     };
 
     const getChecklist = async () => {
-      loadingChecklist.value = true;
       const checklistId = route.params.checklistId;
 
       if (!checklistId || checklistId === "" || checklistId.length === 0) return;
@@ -158,49 +158,26 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/constants.scss";
+@import "@/assets/scss/header.scss";
+
 .checklist-details {
   height: 100%;
   display: flex;
   flex-direction: column;
-  .header {
-    .title {
-      display: flex;
-      align-items: center;
-      font-size: 2.5rem;
-      font-weight: bold;
-      text-transform: uppercase;
 
-      button {
-        margin-right: 1rem;
-        border: 2px solid #261d9f;
-        border-radius: 40px;
-        height: 40px;
-        width: 40px;
-        display: grid;
-        place-content: center;
-        outline: none;
-        cursor: pointer;
-
-        svg {
-          transform: rotate(180deg);
-          margin-left: -3px;
-          fill: #261d9f;
-        }
-      }
-    }
-    .subtitle {
-      font-size: 1.5rem;
-      margin-top: 0.3rem;
-    }
-  }
   .search {
-    margin-top: 2rem;
+    margin-top: 1rem;
+    padding: 0 1rem;
   }
+
   .add-div {
     margin-top: 1rem;
+    padding: 0 1rem;
     display: flex;
-    justify-content: flex-end;
-    a {
+
+    button {
+      margin-left: 1rem;
       padding: 0.8rem 1rem;
       font-size: 1.3rem;
       font-weight: bold;
@@ -211,7 +188,7 @@ export default defineComponent({
       border-radius: 0.8rem;
       cursor: pointer;
       outline: none;
-      background: linear-gradient(to bottom left, #00aeff, #67bacf);
+      background: $accent-gradient;
       transition: 0.15s opacity ease;
 
       svg {
@@ -226,7 +203,6 @@ export default defineComponent({
   .content {
     flex: 1;
     overflow: auto;
-    margin-top: 1rem;
     display: flex;
     flex-direction: column;
     .list {
@@ -241,7 +217,14 @@ export default defineComponent({
         display: flex;
         align-items: center;
 
+        .stats {
+          svg {
+            fill: #555;
+          }
+        }
+
         .infos {
+          margin-left: 1rem;
           .title {
             color: #141b55;
             font-size: 1.5rem;
@@ -282,14 +265,6 @@ export default defineComponent({
           }
         }
 
-        .stats {
-          margin-left: auto;
-
-          svg {
-            fill: #555;
-          }
-        }
-
         &.done {
           background: linear-gradient(to top right, #fff5, #fff8);
 
@@ -314,9 +289,6 @@ export default defineComponent({
           .actions {
             display: flex;
             opacity: 1;
-          }
-          .stats {
-            margin-left: 0.8rem;
           }
         }
         &:not(:last-child) {

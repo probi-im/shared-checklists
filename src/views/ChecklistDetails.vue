@@ -9,27 +9,36 @@
         {{ checklist.name }}
       </div>
       <div class="actions">
-        <button v-if="user && user.id === checklist.createdBy" class="warn">
+        <button
+          v-if="user && user.id === checklist.createdBy"
+          class="warn"
+          @click="del(checklist.id)"
+        >
           <Icon :name="'trash'" />
         </button>
-        <button v-else-if="user && checklist.allowedUsers.includes(user.id)" class="warn">
+        <button
+          v-else-if="user && checklist.allowedUsers.includes(user.id)"
+          class="warn"
+          @click="leave(checklist.id)"
+        >
           <Icon :name="'delete'" />
         </button>
-        <button v-else><Icon :name="'add'" /></button>
+        <button v-else @click="add(checklist.id)"><Icon :name="'add'" /></button>
       </div>
     </div>
     <div class="search">
       <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
-    <div v-if="user && checklist.allowedUsers.includes(user.id)" class="add-div">
-      <CustomInput :placeholder="'New item name'" />
-      <button>
+    <form
+      v-if="user && checklist.allowedUsers.includes(user.id)"
+      @submit.prevent="addNewItem"
+      class="add-div"
+    >
+      <CustomInput :placeholder="'New item name'" v-model.trim="newItemName" required />
+      <button type="submit">
         <Icon :name="'add'" />
       </button>
-      <!-- <router-link :to="{ name: 'new-item', params: { checklistId: checklist.id } }"
-        ><Icon :name="'add'"
-      /></router-link> -->
-    </div>
+    </form>
     <div class="content">
       <div class="list">
         <div
@@ -81,13 +90,21 @@
 import { computed, defineComponent, onMounted, ref } from "vue";
 import { format } from "date-fns";
 import Icon from "@/components/Icon.vue";
-import { useRoute } from "vue-router";
-import router from "@/router";
-import { deleteItem, getChecklistFromId, toggleItemState } from "@/services/checklistService";
+import { useRoute, useRouter } from "vue-router";
+import {
+  addItemToChecklist,
+  deleteChecklist,
+  deleteItem,
+  getChecklistFromId,
+  joinChecklist,
+  leaveChecklist,
+  toggleItemState,
+} from "@/services/checklistService";
 import { Checklist } from "@/models/checklist";
 import { useStore } from "vuex";
 import { State } from "@/store";
 import CustomInput from "@/components/CustomInput.vue";
+import { v4 as uuid4 } from "uuid";
 
 export default defineComponent({
   name: "ChecklistDetails",
@@ -98,11 +115,18 @@ export default defineComponent({
   setup() {
     const store = useStore<State>();
     const route = useRoute();
+    const router = useRouter();
+
+    const user = computed(() => store.state.user);
 
     const checklist = ref<Checklist>();
     const loadingChecklist = ref(true);
 
     const searchQuery = ref("");
+
+    const newItemName = ref("");
+
+    const routeAfterRemoval = ref("private-checklists");
 
     const filteredItems = computed(() =>
       checklist.value?.items
@@ -119,16 +143,54 @@ export default defineComponent({
         : []
     );
 
+    const del = async (checklistId: string) => {
+      if (!user.value) return;
+      // console.log("delete checklist request", checklistId);
+      await deleteChecklist(checklistId);
+      router.push({ name: routeAfterRemoval.value });
+    };
+
+    const leave = async (checklistId: string) => {
+      if (!user.value) return;
+      // console.log("leave checklist request", checklistId);
+      await leaveChecklist(checklistId, user.value.id);
+      router.push({ name: routeAfterRemoval.value });
+    };
+
+    const add = async (checklistId: string) => {
+      if (!user.value) return;
+      // console.log("add checklist request", checklistId);
+      await joinChecklist(checklistId, user.value.id);
+      getChecklist();
+    };
+
     const toggleItem = async (itemId: string) => {
       if (!checklist.value) return;
       await toggleItemState(checklist.value, itemId);
-      await getChecklist();
+      getChecklist();
+    };
+
+    const addNewItem = async () => {
+      if (newItemName.value === "" || !user.value || !checklist.value || !checklist.value.id)
+        return;
+      await addItemToChecklist(
+        {
+          id: uuid4(),
+          createdBy: user.value.id,
+          createdOn: new Date(),
+          text: newItemName.value,
+          done: false,
+        },
+        checklist.value.id
+      );
+      newItemName.value = "";
+      getChecklist();
     };
 
     const delItem = async (itemId: string) => {
       if (!checklist.value) return;
       await deleteItem(checklist.value, itemId);
-      await getChecklist();
+      getChecklist();
     };
 
     const formattedDate = (dateTimestamp: number) => {
@@ -147,16 +209,21 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      await getChecklist();
+      getChecklist();
     });
 
     return {
+      add,
+      addNewItem,
       checklist,
+      del,
       delItem,
       filteredItems,
       formattedDate,
       getChecklist,
+      leave,
       loadingChecklist,
+      newItemName,
       searchQuery,
       toggleItem,
       user: computed(() => store.state.user),

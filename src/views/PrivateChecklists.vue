@@ -54,7 +54,7 @@ export default defineComponent({
     const user = computed(() => store.state.user);
 
     const updateChecklists = async () => {
-      loadingChecklists.value = true;
+      // loadingChecklists.value = true;
       if (!store.state.user) return;
       checklists.value = await getPrivateChecklistsFromUserId(store.state.user.id);
       loadingChecklists.value = false;

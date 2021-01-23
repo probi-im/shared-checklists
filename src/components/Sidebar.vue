@@ -45,7 +45,7 @@ export default defineComponent({
     const store = useStore<State>();
     const navItems = ref([
       {
-        title: "New Checklists",
+        title: "New Checklist",
         icon: "add",
         to: { name: "new-checklist" },
         requireAuth: true,

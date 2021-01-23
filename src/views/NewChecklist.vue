@@ -2,7 +2,7 @@
   <div class="new-checklist">
     <div class="header">
       <div class="title">Create a new checklist</div>
-      <div class="subtitle">Create a new public or private checklist</div>
+      <!-- <div class="subtitle">Create a new public or private checklist</div> -->
     </div>
     <div class="content">
       <form @submit.prevent="create">
@@ -71,21 +71,22 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/header.scss";
 .new-checklist {
-  .header {
-    .title {
-      font-size: 2.5rem;
-      font-weight: bold;
-    }
-    .subtitle {
-      font-size: 1.5rem;
-    }
-  }
+  // .header {
+  //   .title {
+  //     font-size: 2.5rem;
+  //     font-weight: bold;
+  //   }
+  //   .subtitle {
+  //     font-size: 1.5rem;
+  //   }
+  // }
   .content {
     display: flex;
     justify-content: center;
     form {
-      margin-top: 25px;
+      margin-top: 1rem;
       width: 100%;
       max-width: 60%;
       display: flex;

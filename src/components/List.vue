@@ -87,20 +87,6 @@ export default defineComponent({
       type: Array,
       required: true,
     },
-    keyAttributName: {
-      type: String,
-      required: false,
-    },
-    filterAttributName: {
-      type: String,
-      required: false,
-      default: "",
-    },
-    filterString: {
-      type: String,
-      required: false,
-      default: "",
-    },
     toRouteName: {
       type: String,
       required: true,
@@ -111,25 +97,17 @@ export default defineComponent({
     const store = useStore<State>();
     const user = computed(() => store.state.user);
 
-    const filteredItems = computed(() =>
-      props.items.filter((i: any) =>
-        props.filterAttributName
-          ? i[props.filterAttributName].toLowerCase().includes(props.filterString.toLowerCase())
-          : props.items
-      )
-    );
+    const del = async (checklistId: string) => {
+      if (!user.value) return;
+      // console.log("delete checklist request", checklistId);
+      await deleteChecklist(checklistId);
+      emit("listUpdated");
+    };
 
     const leave = async (checklistId: string) => {
       if (!user.value) return;
       // console.log("leave checklist request", checklistId);
       await leaveChecklist(checklistId, user.value.id);
-      emit("listUpdated");
-    };
-
-    const del = async (checklistId: string) => {
-      if (!user.value) return;
-      // console.log("delete checklist request", checklistId);
-      await deleteChecklist(checklistId);
       emit("listUpdated");
     };
 
@@ -144,7 +122,6 @@ export default defineComponent({
       add,
       del,
       items: computed(() => props.items),
-      keyAttributName: props.keyAttributName,
       leave,
       toRouteName: props.toRouteName,
       user,

@@ -50,7 +50,7 @@ export default defineComponent({
     );
 
     const updateChecklists = async () => {
-      loadingChecklists.value = true;
+      // loadingChecklists.value = true;
       checklists.value = await getPublicChecklists();
       loadingChecklists.value = false;
     };

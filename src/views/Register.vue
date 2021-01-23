@@ -1,6 +1,6 @@
 <template>
   <div class="register">
-    <div class="header"><h1>Register</h1></div>
+    <div class="header"><div class="title">Register</div></div>
     <div class="content">
       <form @submit.prevent="register">
         <CustomInput :type="'email'" :placeholder="'Email address'" v-model.trim="email" required />
@@ -64,12 +64,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.register {
-  .header h1 {
-    font-size: 2.75rem;
-    text-transform: uppercase;
-  }
-}
+@import "@/assets/scss/header.scss";
+
 .content {
   display: flex;
   justify-content: center;

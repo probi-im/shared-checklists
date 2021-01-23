@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <div class="header"><h1>Login</h1></div>
+    <div class="header"><div class="title">Login</div></div>
     <div class="content">
       <form @submit.prevent="login">
         <CustomInput :type="'email'" :placeholder="'Email address'" v-model.trim="email" required />
@@ -52,12 +52,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-.login {
-  .header h1 {
-    font-size: 2.75rem;
-    text-transform: uppercase;
-  }
-}
+@import "@/assets/scss/header.scss";
+
 .content {
   display: flex;
   justify-content: center;

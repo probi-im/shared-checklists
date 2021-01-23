@@ -24,8 +24,10 @@
       </template>
     </div>
     <div class="bottom">
-      <router-link v-if="!user" to="login"> Log In / Register </router-link>
-      <button v-else @click="logout">Log Out</button>
+      <router-link v-if="!user" to="login">
+        <span>Log In / Register</span><Icon :name="'login'"
+      /></router-link>
+      <button v-else @click="logout"><span>Log Out</span><Icon :name="'logout'" /></button>
     </div>
   </div>
 </template>
@@ -185,12 +187,24 @@ export default defineComponent({
       background: linear-gradient(to bottom left, #00aeff, #67bacf);
       outline: none;
       color: #fff;
-      font-size: 1.1rem;
       border: none;
       padding: 0.8rem 1rem;
       border-radius: 0.8rem;
-      text-transform: uppercase;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+
+      span {
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        margin-bottom: -2px;
+      }
+
+      svg {
+        margin-left: 0.5rem;
+        display: inline;
+        fill: white;
+      }
     }
   }
 }

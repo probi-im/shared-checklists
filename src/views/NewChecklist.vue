@@ -41,7 +41,7 @@ export default defineComponent({
 
     const checklistDesc = ref("");
     const checklistName = ref("");
-    const checklistStatus = ref("private");
+    const checklistStatus = ref<"public" | "private">("private");
 
     const create = async () => {
       if (!user.value) return;

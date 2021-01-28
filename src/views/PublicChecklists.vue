@@ -3,27 +3,22 @@
   <div v-else class="public-checklists">
     <div class="header">
       <div class="title">Public Checklists</div>
-      <!-- <div class="subtitle">List of public checklists available to everyone</div> -->
     </div>
     <div class="search">
       <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
     <div class="content">
-      <List
-        :items="filteredChecklists"
-        :toRouteName="'public-checklist-details'"
-        @list-updated="updateChecklists"
-      />
+      <List :items="filteredChecklists" :toRouteName="'public-checklist-details'" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import List from "@/components/List.vue";
 import CustomInput from "@/components/CustomInput.vue";
-import { getPublicChecklists } from "@/services/checklistService";
-import { Checklist } from "@/models/checklist";
+import { useStore } from "vuex";
+import { State } from "@/store";
 
 export default defineComponent({
   name: "Public Checklists",
@@ -33,12 +28,14 @@ export default defineComponent({
   },
   setup() {
     const searchQuery = ref("");
+    const store = useStore<State>();
 
-    const checklists = ref<Checklist[]>();
-    const loadingChecklists = ref(true);
+    const loadingChecklists = computed(() => !store.state.publicFirebaseListenersInitiated);
+
+    const publicChecklists = computed(() => store.state.publicChecklists);
 
     const filteredChecklists = computed(() =>
-      checklists.value
+      publicChecklists.value
         ?.filter(
           (c) =>
             c.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -49,21 +46,10 @@ export default defineComponent({
         })
     );
 
-    const updateChecklists = async () => {
-      // loadingChecklists.value = true;
-      checklists.value = await getPublicChecklists();
-      loadingChecklists.value = false;
-    };
-
-    onMounted(async () => {
-      await updateChecklists();
-    });
-
     return {
       searchQuery,
       filteredChecklists,
       loadingChecklists,
-      updateChecklists,
     };
   },
 });

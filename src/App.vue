@@ -8,15 +8,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, onUnmounted } from "vue";
 import store from "@/store";
 import Sidebar from "@/components/Sidebar.vue";
 
 export default defineComponent({
   name: "App",
   components: { Sidebar },
-  unmounted() {
-    store.commit("stopFirebaseListeners");
+  setup() {
+    onMounted(() => {
+      // console.log("app setup mounted");
+    });
+    onUnmounted(() => {
+      // console.log("app setup onunmounted");
+      store.commit("stopFirebaseListeners");
+    });
   },
 });
 </script>

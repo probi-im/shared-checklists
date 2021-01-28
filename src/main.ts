@@ -20,9 +20,10 @@ auth.onAuthStateChanged(user => {
         displayName: user.displayName,
         photoUrl: user.photoURL
       });
-      // store.commit('initializeFirebaseListeners');
+      store.commit("initializePrivateFirebaseListeners");
     } else {
       store.commit("setUserProfile", null);
     }
+    store.commit("initializePublicFirebaseListeners");
   }
 });

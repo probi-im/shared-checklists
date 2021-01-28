@@ -5,19 +5,32 @@ import firebase from "firebase/app";
 import { Checklist } from "@/models/checklist";
 import { Item } from "@/models/item";
 import { User } from "@/models/user";
+import { docToChecklist } from "@/services/checklistService";
 
 export interface State {
+  publicChecklists: Checklist[];
+  privateChecklists: Checklist[];
   checklists: Checklist[];
   firebaseListenersInitiated: boolean;
   user: User | null;
+  publicFirebaseListenersInitiated: boolean;
+  privateFirebaseListenersInitiated: boolean;
+  publicChecklistsListenerUnsubscribe: Function | null;
+  privateChecklistsListenerUnsubscribe: Function | null;
   collectionsListenerUnsubscribe: Function | null;
 }
 
 const store = createStore<State>({
   state: {
+    publicChecklists: [],
+    privateChecklists: [],
     checklists: [],
     firebaseListenersInitiated: false,
     user: null,
+    publicFirebaseListenersInitiated: false,
+    privateFirebaseListenersInitiated: false,
+    publicChecklistsListenerUnsubscribe: null,
+    privateChecklistsListenerUnsubscribe: null,
     collectionsListenerUnsubscribe: null
   },
   mutations: {
@@ -27,29 +40,35 @@ const store = createStore<State>({
     setUserProfile(state, user) {
       state.user = user;
     },
-    initializeFirebaseListeners(state) {
-      if (!state.user || !state.user.id) return;
-      state.collectionsListenerUnsubscribe = fb.checklistsCollection
-        .where("allowedUsers", "array-contains", state.user.id ? state.user.id : "invalid_userid")
-        .orderBy("createdOn", "desc")
+    initializePublicFirebaseListeners(state) {
+      state.publicChecklistsListenerUnsubscribe = fb.checklistsCollection
+        .where("status", "==", "public")
         .onSnapshot(async snapshot => {
-          let checklists: Checklist[] = [];
-
-          for (const doc of snapshot.docs) {
-            let checklist: Checklist = doc.data() as Checklist;
-            checklist.people = checklist.allowedUsers.length;
-            checklist.id = doc.id;
-            checklists.push(checklist as Checklist);
-          }
-
-          store.commit("setChecklists", checklists);
+          state.publicChecklists = snapshot.docs.map(doc => docToChecklist(doc));
+          console.log("public checklists:", state.publicChecklists);
+          state.publicFirebaseListenersInitiated = true;
         });
-      state.firebaseListenersInitiated = true;
+      console.log("public collections listener initialized");
+    },
+    initializePrivateFirebaseListeners(state) {
+      if (!state.user || !state.user.id) return;
+      state.privateChecklistsListenerUnsubscribe = fb.checklistsCollection
+        .where("allowedUsers", "array-contains", state.user.id)
+        .onSnapshot(async snapshot => {
+          state.privateChecklists = snapshot.docs.map(doc => docToChecklist(doc));
+          console.log("private checklists:", state.privateChecklists);
+          state.privateFirebaseListenersInitiated = true;
+        });
+      console.log("private collections listener initialized");
     },
     stopFirebaseListeners(state) {
-      if (state.collectionsListenerUnsubscribe) {
-        state.collectionsListenerUnsubscribe();
-        console.log("collections listener stopped");
+      if (state.publicChecklistsListenerUnsubscribe) {
+        state.publicChecklistsListenerUnsubscribe();
+        console.log("public collections listener stopped");
+      }
+      if (state.privateChecklistsListenerUnsubscribe) {
+        state.privateChecklistsListenerUnsubscribe();
+        console.log("private collections listener stopped");
       }
     }
   },

@@ -3,28 +3,22 @@
   <div v-else class="private-checklists">
     <div class="header">
       <div class="title">Private Checklists</div>
-      <!-- <div class="subtitle">List of your private checklists</div> -->
     </div>
     <div class="search">
       <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
     <div class="content">
-      <List
-        :items="filteredChecklists"
-        :toRouteName="'private-checklist-details'"
-        @list-updated="updateChecklists"
-      />
+      <List :items="filteredChecklists" :toRouteName="'private-checklist-details'" />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
-import { useStore, Store } from "vuex";
+import { computed, defineComponent, ref } from "vue";
+import { useStore } from "vuex";
 import { State } from "@/store";
 import CustomInput from "@/components/CustomInput.vue";
 import List from "@/components/List.vue";
-import { getPrivateChecklistsFromUserId } from "@/services/checklistService";
 import { Checklist } from "@/models/checklist";
 
 export default defineComponent({
@@ -34,14 +28,16 @@ export default defineComponent({
     List,
   },
   setup() {
-    const store: Store<State> = useStore();
+    const store = useStore<State>();
     const searchQuery = ref("");
 
     const checklists = ref<Checklist[]>();
-    const loadingChecklists = ref(true);
+    const loadingChecklists = computed(() => !store.state.privateFirebaseListenersInitiated);
+
+    const privateChecklists = computed(() => store.state.privateChecklists);
 
     const filteredChecklists = computed(() =>
-      checklists.value
+      privateChecklists.value
         ?.filter(
           (c) =>
             c.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
@@ -53,23 +49,11 @@ export default defineComponent({
     );
     const user = computed(() => store.state.user);
 
-    const updateChecklists = async () => {
-      // loadingChecklists.value = true;
-      if (!store.state.user) return;
-      checklists.value = await getPrivateChecklistsFromUserId(store.state.user.id);
-      loadingChecklists.value = false;
-    };
-
-    onMounted(async () => {
-      await updateChecklists();
-    });
-
     return {
       searchQuery,
       checklists,
       filteredChecklists,
       loadingChecklists,
-      updateChecklists,
       user,
     };
   },

@@ -7,7 +7,7 @@ export interface Checklist {
   items: Item[];
   allowedUsers: string[];
   people: number;
-  status: string;
+  status: "public" | "private";
   createdOn: Date;
   createdBy?: string;
 }

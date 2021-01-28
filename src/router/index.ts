@@ -51,6 +51,14 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: "/checklist/:checklistId",
+    name: "checklist-details",
+    component: ChecklistDetails,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/checklist",
     name: "checklist",
     component: Checklist

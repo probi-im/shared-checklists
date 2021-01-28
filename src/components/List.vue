@@ -7,6 +7,7 @@
       :to="{
         name: toRouteName,
         params: { checklistId: item.id },
+        query: { from },
       }"
     >
       <div class="flags">
@@ -38,7 +39,10 @@
           title="Edit this checklist"
           v-if="user && user.id === item.createdBy"
           @click.prevent="
-            $router.push({ name: 'edit-checklist', params: { checklistId: item.id } })
+            $router.push({
+              name: 'edit-checklist',
+              params: { checklistId: item.id },
+            })
           "
         >
           <Icon :name="'edit'" />
@@ -83,6 +87,10 @@ export default defineComponent({
     Icon,
   },
   props: {
+    from: {
+      type: String,
+      required: true,
+    },
     items: {
       type: Array,
       required: true,
@@ -121,6 +129,7 @@ export default defineComponent({
     return {
       add,
       del,
+      from: props.from,
       items: computed(() => props.items),
       leave,
       toRouteName: props.toRouteName,

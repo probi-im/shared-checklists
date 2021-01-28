@@ -1,36 +1,38 @@
 <template>
-  <div v-if="loadingChecklist" class="loading">Loading checklist details...</div>
+  <div v-if="loadingChecklist || !checklistDetails" class="loading">
+    Loading checklist details...
+  </div>
   <div v-else class="checklist-details">
     <div class="header">
       <div class="leading">
-        <button class="back-button" @click="$router.back()"><Icon :name="'arrow'" /></button>
+        <button class="back-button" @click="goBack"><Icon :name="'arrow'" /></button>
       </div>
       <div class="title">
-        {{ checklist.name }}
+        {{ checklistDetails.name }}
       </div>
       <div class="actions">
         <button
-          v-if="user && user.id === checklist.createdBy"
+          v-if="user && user.id === checklistDetails.createdBy"
           class="warn"
-          @click="del(checklist.id)"
+          @click="del(checklistDetails.id)"
         >
           <Icon :name="'trash'" />
         </button>
         <button
-          v-else-if="user && checklist.allowedUsers.includes(user.id)"
+          v-else-if="user && checklistDetails.allowedUsers.includes(user.id)"
           class="warn"
-          @click="leave(checklist.id)"
+          @click="leave(checklistDetails.id)"
         >
           <Icon :name="'delete'" />
         </button>
-        <button v-else @click="add(checklist.id)"><Icon :name="'add'" /></button>
+        <button v-else @click="add(checklistDetails.id)"><Icon :name="'add'" /></button>
       </div>
     </div>
     <div class="search">
       <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
     <form
-      v-if="user && checklist.allowedUsers.includes(user.id)"
+      v-if="user && checklistDetails.allowedUsers.includes(user.id)"
       @submit.prevent="addNewItem"
       class="add-div"
     >
@@ -45,12 +47,17 @@
           class="list-item"
           v-for="item in filteredItems"
           :key="item.id"
-          :class="{ done: item.done, locked: !user || !checklist.allowedUsers.includes(user.id) }"
-          @click="user && checklist.allowedUsers.includes(user.id) ? toggleItem(item.id) : ''"
+          :class="{
+            done: item.done,
+            locked: !user || !checklistDetails.allowedUsers.includes(user.id),
+          }"
+          @click="
+            user && checklistDetails.allowedUsers.includes(user.id) ? toggleItem(item.id) : ''
+          "
         >
           <div class="stats">
-            <Icon v-if="item.done" :name="'checkbox_filled'" />
-            <Icon v-else :name="'checkbox_empty'" />
+            <Icon v-if="item.done" :name="'circle_checkbox_filled'" />
+            <Icon v-else :name="'circle_checkbox_empty'" />
           </div>
           <div class="infos">
             <div class="title">{{ item.title || item.text }}</div>
@@ -65,14 +72,14 @@
               @click.stop="
                 $router.push({
                   name: 'edit-item',
-                  params: { checklistId: checklist.id, itemId: item.id },
+                  params: { checklistId: checklistDetails.id, itemId: item.id },
                 })
               "
             >
               <Icon :name="'edit'" />
             </button>
             <button
-              v-if="user && checklist.allowedUsers.includes(user.id)"
+              v-if="user && checklistDetails.allowedUsers.includes(user.id)"
               title="Delete this item"
               @click.stop="delItem(item.id)"
               class="warn"
@@ -87,7 +94,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { format } from "date-fns";
 import Icon from "@/components/Icon.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -95,7 +102,6 @@ import {
   addItemToChecklist,
   deleteChecklist,
   deleteItem,
-  getChecklistFromId,
   joinChecklist,
   leaveChecklist,
   toggleItemState,
@@ -113,6 +119,7 @@ export default defineComponent({
     Icon,
   },
   setup() {
+    const availableReturnUrls = ["public", "private"];
     const store = useStore<State>();
     const route = useRoute();
     const router = useRouter();
@@ -120,17 +127,40 @@ export default defineComponent({
     const user = computed(() => store.state.user);
 
     const checklist = ref<Checklist>();
-    const loadingChecklist = ref(true);
+    const checklistStatus = computed(() =>
+      store.state.privateChecklists.find((c) => c.id === checklistId.value) ? "private" : "public"
+    );
+    const loadingChecklist = computed(() =>
+      checklistStatus.value === "public"
+        ? !store.state.publicFirebaseListenersInitiated
+        : !store.state.privateFirebaseListenersInitiated
+    );
+
+    const checklistId = computed(() => route.params.checklistId as string);
+
+    const checklistDetails = computed(() => {
+      return (
+        store.state.publicChecklists.find((c) => c.id === checklistId.value) ||
+        store.state.privateChecklists.find((c) => c.id === checklistId.value)
+      );
+    });
 
     const searchQuery = ref("");
 
     const newItemName = ref("");
 
-    const routeAfterRemoval = ref("private-checklists");
+    const returnUrl = computed(
+      () =>
+        `${
+          availableReturnUrls.includes(route.query.from as string)
+            ? (route.query.from as string)
+            : "public"
+        }-checklists`
+    );
 
     const filteredItems = computed(() =>
-      checklist.value?.items
-        ? checklist.value.items
+      checklistDetails.value?.items
+        ? checklistDetails.value.items
             .filter((c) => c.text.toLowerCase().includes(searchQuery.value.toLowerCase()))
             // sorting by creation date
             .sort((a, b) => {
@@ -143,35 +173,38 @@ export default defineComponent({
         : []
     );
 
+    const goBack = () => {
+      router.push({ name: returnUrl.value });
+    };
+
     const del = async (checklistId: string) => {
       if (!user.value) return;
-      // console.log("delete checklist request", checklistId);
       await deleteChecklist(checklistId);
-      router.push({ name: routeAfterRemoval.value });
+      goBack();
     };
 
     const leave = async (checklistId: string) => {
       if (!user.value) return;
-      // console.log("leave checklist request", checklistId);
       await leaveChecklist(checklistId, user.value.id);
-      router.push({ name: routeAfterRemoval.value });
     };
 
     const add = async (checklistId: string) => {
       if (!user.value) return;
-      // console.log("add checklist request", checklistId);
       await joinChecklist(checklistId, user.value.id);
-      getChecklist();
     };
 
     const toggleItem = async (itemId: string) => {
-      if (!checklist.value) return;
-      await toggleItemState(checklist.value, itemId);
-      getChecklist();
+      if (!checklistDetails.value) return;
+      await toggleItemState(checklistDetails.value, itemId);
     };
 
     const addNewItem = async () => {
-      if (newItemName.value === "" || !user.value || !checklist.value || !checklist.value.id)
+      if (
+        newItemName.value === "" ||
+        !user.value ||
+        !checklistDetails.value ||
+        !checklistDetails.value.id
+      )
         return;
       await addItemToChecklist(
         {
@@ -181,46 +214,31 @@ export default defineComponent({
           text: newItemName.value,
           done: false,
         },
-        checklist.value.id
+        checklistDetails.value.id
       );
       newItemName.value = "";
-      getChecklist();
     };
 
     const delItem = async (itemId: string) => {
-      if (!checklist.value) return;
-      await deleteItem(checklist.value, itemId);
-      getChecklist();
+      if (!checklistDetails.value) return;
+      await deleteItem(checklistDetails.value, itemId);
     };
 
     const formattedDate = (dateTimestamp: number) => {
       return format(dateTimestamp, "dd-MM-yyyy HH:mm");
     };
 
-    const getChecklist = async () => {
-      const checklistId = route.params.checklistId;
-
-      if (!checklistId || checklistId === "" || checklistId.length === 0) return;
-
-      const checklistResult = await getChecklistFromId(checklistId as string);
-      if (!checklistResult) return;
-      checklist.value = checklistResult;
-      loadingChecklist.value = false;
-    };
-
-    onMounted(async () => {
-      getChecklist();
-    });
-
     return {
       add,
       addNewItem,
       checklist,
+      checklistDetails,
       del,
       delItem,
       filteredItems,
       formattedDate,
-      getChecklist,
+      // getChecklist,
+      goBack,
       leave,
       loadingChecklist,
       newItemName,
@@ -259,9 +277,11 @@ export default defineComponent({
   }
 
   .add-div {
-    margin-top: 1rem;
-    padding: 0 1rem;
+    margin: 1rem 1rem 0;
+    padding: 1rem;
     display: flex;
+    background: #fff5;
+    border-radius: 1rem;
 
     button {
       margin-left: 1rem;

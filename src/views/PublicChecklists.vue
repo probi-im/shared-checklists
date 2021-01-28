@@ -8,7 +8,7 @@
       <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
     <div class="content">
-      <List :items="filteredChecklists" :toRouteName="'public-checklist-details'" />
+      <List :items="filteredChecklists" :toRouteName="'checklist-details'" :from="'public'" />
     </div>
   </div>
 </template>

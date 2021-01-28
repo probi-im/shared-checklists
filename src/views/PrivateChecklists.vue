@@ -1,5 +1,5 @@
 <template>
-  <div v-if="loadingChecklists" class="loadin">Loading checklists...</div>
+  <div v-if="loadingChecklists" class="loading">Loading checklists...</div>
   <div v-else class="private-checklists">
     <div class="header">
       <div class="title">Private Checklists</div>

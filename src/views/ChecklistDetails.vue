@@ -130,10 +130,10 @@ export default defineComponent({
     const checklistStatus = computed(() =>
       store.state.privateChecklists.find((c) => c.id === checklistId.value) ? "private" : "public"
     );
-    const loadingChecklist = computed(() =>
-      checklistStatus.value === "public"
-        ? !store.state.publicFirebaseListenersInitiated
-        : !store.state.privateFirebaseListenersInitiated
+    const loadingChecklist = computed(
+      () =>
+        !store.state.publicFirebaseListenersInitiated ||
+        !store.state.privateFirebaseListenersInitiated
     );
 
     const checklistId = computed(() => route.params.checklistId as string);

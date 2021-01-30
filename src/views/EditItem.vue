@@ -1,9 +1,11 @@
 <template>
-  <div v-if="loadingItem" class="loading">Loading item details...</div>
+  <div v-if="loadingItem || !baseChecklist" class="loading">Loading item details...</div>
   <div v-else class="edit-item">
     <div class="header">
+      <div class="leading">
+        <button class="back-button" @click="goBack"><Icon :name="'arrow'" /></button>
+      </div>
       <div class="title">Edit the item</div>
-      <div class="subtitle">Edit an existing item</div>
     </div>
     <div class="content">
       <form @submit.prevent="update">
@@ -15,56 +17,63 @@
 </template>
 
 <script lang="ts">
-import { createChecklist, getChecklistFromId, updateChecklist } from "@/services/checklistService";
+import { updateChecklist } from "@/services/checklistService";
 import { State } from "@/store";
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import CustomInput from "@/components/CustomInput.vue";
 import { Checklist } from "@/models/checklist";
 import { Item } from "@/models/item";
+import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
   name: "Edit Item",
-  components: { CustomInput },
+  components: { CustomInput, Icon },
   setup() {
+    const store = useStore<State>();
     const router = useRouter();
     const route = useRoute();
 
-    const baseChecklist = ref<Checklist>();
     const checklist = ref<Checklist>();
-    const loadingItem = ref(true);
     const item = ref<Item>();
+
+    const loadingItem = computed(
+      () =>
+        !store.state.publicFirebaseListenersInitiated ||
+        !store.state.privateFirebaseListenersInitiated
+    );
+
+    const checklistId = computed(() => route.params.checklistId as string);
+    const itemId = computed(() => route.params.itemId as string);
+
+    const baseChecklist = computed(() => {
+      checklist.value =
+        store.state.publicChecklists.find((c) => c.id === checklistId.value) ||
+        store.state.privateChecklists.find((c) => c.id === checklistId.value);
+      item.value = checklist.value?.items.find((i) => i.id === itemId.value);
+      if (!item.value) throw new Error("Unable to find the item");
+      return checklist.value;
+    });
 
     const update = async () => {
       if (!checklist.value) return;
       await updateChecklist(checklist.value);
-      router.back();
+      goBack();
     };
 
-    const getChecklist = async () => {
-      loadingItem.value = true;
-      const checklistId = route.params.checklistId;
-      const itemId = route.params.itemId;
-
-      if (!checklistId || checklistId === "" || checklistId.length === 0) return;
-      if (!itemId || itemId === "" || itemId.length === 0) return;
-
-      const checklistResult = await getChecklistFromId(checklistId as string);
-      if (!checklistResult) return;
-      checklist.value = checklistResult;
-      baseChecklist.value = Object.assign({}, checklist.value);
-      item.value = checklist.value.items.find((i) => i.id === itemId);
-      if (!item.value) throw new Error("Unable to find the item");
-      loadingItem.value = false;
+    const goBack = () => {
+      router.push({
+        name: "checklist-details",
+        params: { checklistId: checklist.value?.id as string },
+        query: { from: "private" },
+      });
     };
-
-    onMounted(async () => {
-      await getChecklist();
-    });
 
     return {
+      baseChecklist,
       item,
+      goBack,
       loadingItem,
       update,
     };
@@ -73,16 +82,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/header.scss";
+
 .edit-item {
-  .header {
-    .title {
-      font-size: 2.5rem;
-      font-weight: bold;
-    }
-    .subtitle {
-      font-size: 1.5rem;
-    }
-  }
   .content {
     display: flex;
     justify-content: center;

@@ -51,6 +51,22 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: "/checklist/:checklistId/edit/item/:itemId",
+    name: "edit-item",
+    component: EditItem,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: "/checklist/:checklistId/edit",
+    name: "edit-checklist",
+    component: EditChecklist,
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: "/checklist/:checklistId",
     name: "checklist-details",
     component: ChecklistDetails,
@@ -75,22 +91,6 @@ const routes: Array<RouteRecordRaw> = [
     path: "/new-item/:checklistId",
     name: "new-item",
     component: NewItem,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: "/edit/:checklistId/item/:itemId",
-    name: "edit-item",
-    component: EditItem,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: "/edit/:checklistId",
-    name: "edit-checklist",
-    component: EditChecklist,
     meta: {
       requiresAuth: true
     }

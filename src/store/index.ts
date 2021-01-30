@@ -45,10 +45,10 @@ const store = createStore<State>({
         .where("status", "==", "public")
         .onSnapshot(async snapshot => {
           state.publicChecklists = snapshot.docs.map(doc => docToChecklist(doc));
-          console.log("public checklists:", state.publicChecklists);
+          // console.log("public checklists:", state.publicChecklists);
           state.publicFirebaseListenersInitiated = true;
         });
-      console.log("public collections listener initialized");
+      // console.log("public collections listener initialized");
     },
     initializePrivateFirebaseListeners(state) {
       if (!state.user || !state.user.id) return;
@@ -56,19 +56,19 @@ const store = createStore<State>({
         .where("allowedUsers", "array-contains", state.user.id)
         .onSnapshot(async snapshot => {
           state.privateChecklists = snapshot.docs.map(doc => docToChecklist(doc));
-          console.log("private checklists:", state.privateChecklists);
+          // console.log("private checklists:", state.privateChecklists);
           state.privateFirebaseListenersInitiated = true;
         });
-      console.log("private collections listener initialized");
+      // console.log("private collections listener initialized");
     },
     stopFirebaseListeners(state) {
       if (state.publicChecklistsListenerUnsubscribe) {
         state.publicChecklistsListenerUnsubscribe();
-        console.log("public collections listener stopped");
+        // console.log("public collections listener stopped");
       }
       if (state.privateChecklistsListenerUnsubscribe) {
         state.privateChecklistsListenerUnsubscribe();
-        console.log("private collections listener stopped");
+        // console.log("private collections listener stopped");
       }
     }
   },

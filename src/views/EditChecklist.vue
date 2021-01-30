@@ -1,9 +1,11 @@
 <template>
-  <div v-if="loadingChecklist" class="loading">Loading checklist details...</div>
+  <div v-if="loadingChecklist || !baseChecklist" class="loading">Loading checklist details...</div>
   <div v-else class="edit-checklist">
     <div class="header">
+      <div class="leading">
+        <button class="back-button" @click="goBack"><Icon :name="'arrow'" /></button>
+      </div>
       <div class="title">Edit the checklist</div>
-      <div class="subtitle">Edit an existing checklist</div>
     </div>
     <div class="content">
       <form @submit.prevent="update">
@@ -24,51 +26,54 @@
 </template>
 
 <script lang="ts">
-import { createChecklist, getChecklistFromId, updateChecklist } from "@/services/checklistService";
+import { updateChecklist } from "@/services/checklistService";
 import { State } from "@/store";
-import { computed, defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 import CustomInput from "@/components/CustomInput.vue";
 import CustomSelect from "@/components/CustomSelect.vue";
 import { Checklist } from "@/models/checklist";
+import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
   name: "Edit Checklist",
-  components: { CustomInput, CustomSelect },
+  components: { CustomInput, CustomSelect, Icon },
   setup() {
+    const store = useStore<State>();
     const router = useRouter();
     const route = useRoute();
 
-    const baseChecklist = ref<Checklist>();
     const checklist = ref<Checklist>();
-    const loadingChecklist = ref(true);
+    const loadingChecklist = computed(
+      () =>
+        !store.state.publicFirebaseListenersInitiated ||
+        !store.state.privateFirebaseListenersInitiated
+    );
+
+    const checklistId = computed(() => route.params.checklistId as string);
+
+    const baseChecklist = computed(() => {
+      checklist.value =
+        store.state.publicChecklists.find((c) => c.id === checklistId.value) ||
+        store.state.privateChecklists.find((c) => c.id === checklistId.value);
+      return checklist.value;
+    });
 
     const update = async () => {
       if (!checklist.value) return;
       await updateChecklist(checklist.value);
-      router.back();
+      goBack();
     };
 
-    const getChecklist = async () => {
-      loadingChecklist.value = true;
-      const checklistId = route.params.checklistId;
-
-      if (!checklistId || checklistId === "" || checklistId.length === 0) return;
-
-      const checklistResult = await getChecklistFromId(checklistId as string);
-      if (!checklistResult) return;
-      checklist.value = checklistResult;
-      baseChecklist.value = Object.assign({}, checklist.value);
-      loadingChecklist.value = false;
+    const goBack = () => {
+      router.push({ name: "private-checklists" });
     };
-
-    onMounted(async () => {
-      await getChecklist();
-    });
 
     return {
+      baseChecklist,
       checklist,
+      goBack,
       loadingChecklist,
       update,
     };
@@ -77,16 +82,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/header.scss";
+
 .edit-checklist {
-  .header {
-    .title {
-      font-size: 2.5rem;
-      font-weight: bold;
-    }
-    .subtitle {
-      font-size: 1.5rem;
-    }
-  }
   .content {
     display: flex;
     justify-content: center;

@@ -32,6 +32,10 @@
         cursor: pointer;
       }
 
+      &:not(:first-child) {
+        margin-left: 1rem;
+      }
+
       &.back-button {
         svg {
           transform: rotate(180deg);

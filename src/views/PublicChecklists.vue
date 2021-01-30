@@ -38,6 +38,7 @@ export default defineComponent({
       publicChecklists.value
         ?.filter(
           (c) =>
+            c.id?.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
             c.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
             c.desc?.toLowerCase().includes(searchQuery.value.toLowerCase())
         )

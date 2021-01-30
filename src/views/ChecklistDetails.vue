@@ -12,8 +12,16 @@
       </div>
       <div class="actions">
         <button
+          v-if="user && checklistDetails.allowedUsers.includes(user.id)"
+          title="Copy checklist ID"
+          @click="copyToClipboard(checklistDetails.id)"
+        >
+          <Icon :name="'copy'" />
+        </button>
+        <button
           v-if="user && user.id === checklistDetails.createdBy"
           class="warn"
+          title="Delete this checklist"
           @click="del(checklistDetails.id)"
         >
           <Icon :name="'trash'" />
@@ -21,11 +29,19 @@
         <button
           v-else-if="user && checklistDetails.allowedUsers.includes(user.id)"
           class="warn"
+          title="Leave this checklist"
           @click="leave(checklistDetails.id)"
         >
           <Icon :name="'delete'" />
         </button>
-        <button v-else @click="add(checklistDetails.id)"><Icon :name="'add'" /></button>
+        <button
+          v-else
+          class="primary"
+          title="Join this checklist"
+          @click="add(checklistDetails.id)"
+        >
+          <Icon :name="'add'" />
+        </button>
       </div>
     </div>
     <div class="search">
@@ -224,6 +240,24 @@ export default defineComponent({
       await deleteItem(checklistDetails.value, itemId);
     };
 
+    const copyToClipboard = async (itemId: string) => {
+      try {
+        const permissionName = "clipboard-write" as PermissionName;
+        const result = await navigator.permissions.query({ name: permissionName });
+        if (result.state === "granted" || result.state === "prompt") {
+          try {
+            await navigator.clipboard.writeText(itemId);
+          } catch (error) {
+            console.log("copy to clipboard failed (copy failed)");
+            console.error(error);
+          }
+        }
+      } catch (error) {
+        console.log("copy to clipboard failed (permissions error");
+        console.error(error);
+      }
+    };
+
     const formattedDate = (dateTimestamp: number) => {
       return format(dateTimestamp, "dd-MM-yyyy HH:mm");
     };
@@ -233,6 +267,7 @@ export default defineComponent({
       addNewItem,
       checklist,
       checklistDetails,
+      copyToClipboard,
       del,
       delItem,
       filteredItems,
@@ -261,7 +296,7 @@ export default defineComponent({
 
   .header .actions {
     button {
-      svg {
+      &.primary svg {
         fill: blue;
       }
 

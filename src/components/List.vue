@@ -1,5 +1,5 @@
 <template>
-  <div class="list">
+  <transition-group name="list" class="list" tag="div">
     <router-link
       class="list-item"
       v-for="item in items"
@@ -72,7 +72,7 @@
         <Icon :name="'person'" />
       </div>
     </router-link>
-  </div>
+  </transition-group>
 </template>
 
 <script lang="ts">
@@ -243,6 +243,16 @@ export default defineComponent({
     &:not(:last-child) {
       margin-bottom: 1rem;
     }
+  }
+  .list-enter-active,
+  .list-leave-active,
+  .list-move {
+    transition: 0.3s all ease;
+  }
+  .list-enter-from,
+  .list-leave-to {
+    opacity: 0;
+    transform: scale(0.5);
   }
 }
 </style>

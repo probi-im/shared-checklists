@@ -5,7 +5,7 @@
       <div class="title">Public Checklists</div>
     </div>
     <div class="search">
-      <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
+      <CustomInput :placeholder="'Search (name, description, ID)'" v-model.trim="searchQuery" />
     </div>
     <div class="content">
       <List :items="filteredChecklists" :toRouteName="'checklist-details'" :from="'public'" />

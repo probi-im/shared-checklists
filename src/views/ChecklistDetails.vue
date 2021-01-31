@@ -11,11 +11,7 @@
         {{ checklistDetails.name }}
       </div>
       <div class="actions">
-        <button
-          v-if="user && checklistDetails.allowedUsers.includes(user.id)"
-          title="Copy checklist ID"
-          @click="copyToClipboard(checklistDetails.id)"
-        >
+        <button title="Copy checklist ID" @click="copyToClipboard(checklistDetails.id)">
           <Icon :name="'copy'" />
         </button>
         <button
@@ -58,7 +54,7 @@
       </button>
     </form>
     <div class="content">
-      <div class="list">
+      <transition-group name="list" class="list" tag="div">
         <div
           class="list-item"
           v-for="item in filteredItems"
@@ -104,7 +100,7 @@
             </button>
           </div>
         </div>
-      </div>
+      </transition-group>
     </div>
   </div>
 </template>
@@ -350,6 +346,7 @@ export default defineComponent({
 
     .list {
       padding: 1rem;
+      position: relative;
 
       .list-item {
         display: block;
@@ -369,13 +366,13 @@ export default defineComponent({
 
         .infos {
           margin-left: 1rem;
-
+          color: black;
           .title {
-            color: #141b55;
             font-size: 1.5rem;
           }
           .subtitle {
             color: grey;
+            margin-top: 0.3rem;
           }
         }
 
@@ -413,21 +410,7 @@ export default defineComponent({
 
         &.done {
           background: linear-gradient(to top right, #fff5, #fff8);
-
-          .infos {
-            .title {
-              color: #141b5599;
-            }
-            .subtitle {
-              color: #80808099;
-            }
-          }
-
-          .stats {
-            svg {
-              fill: #55555599;
-            }
-          }
+          opacity: 0.7;
         }
 
         &:not(.locked):hover {
@@ -443,6 +426,17 @@ export default defineComponent({
         &:not(:last-child) {
           margin-bottom: 1rem;
         }
+      }
+
+      .list-enter-active,
+      .list-leave-active,
+      .list-move {
+        transition: 0.3s all ease;
+      }
+      .list-enter-from,
+      .list-leave-to {
+        opacity: 0;
+        transform: scale(0.5);
       }
     }
   }

@@ -6,17 +6,8 @@
     </div>
     <div class="nav">
       <template v-for="navItem in navItems">
-        <div
-          v-if="navItem.disabled || (navItem.requireAuth && !user)"
-          :key="navItem.title"
-          class="nav-item disabled"
-        >
-          <span class="icon"><Icon :name="navItem.icon" /></span>
-          {{ navItem.title }}
-          <router-link to="login">Log In</router-link>
-        </div>
         <router-link
-          v-else
+          v-if="!navItem.disabled && (!navItem.requireAuth || user)"
           :key="navItem.title"
           class="nav-item"
           active-class="active"
@@ -25,6 +16,11 @@
           <span class="icon"><Icon :name="navItem.icon" /></span>
           {{ navItem.title }}
         </router-link>
+        <div v-else-if="!navItem.disabled" :key="navItem.title" class="nav-item disabled">
+          <span class="icon"><Icon :name="navItem.icon" /></span>
+          {{ navItem.title }}
+          <router-link to="login">Log In</router-link>
+        </div>
       </template>
     </div>
     <div class="bottom">
@@ -73,12 +69,14 @@ export default defineComponent({
         icon: "settings",
         to: { name: "settings" },
         requireAuth: true,
+        disabled: true,
       },
       {
         title: "About",
         icon: "about",
         to: { name: "about" },
         requireAuth: false,
+        disabled: true,
       },
     ]);
 
@@ -129,7 +127,7 @@ export default defineComponent({
       padding: 0 0.8rem;
       display: flex;
       align-items: center;
-      background: #fff7;
+      background: #fff9;
       border-radius: 1rem;
       margin: 0.5rem 0;
       text-decoration: none;

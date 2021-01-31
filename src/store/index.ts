@@ -186,6 +186,7 @@ const store = createStore<State>({
             displayName: user.displayName,
             photoUrl: user.photoURL
           });
+          commit("initializePrivateFirebaseListeners");
           // commit("initializeFirebaseListeners");
           router.push({ name: "private-checklists" });
         }
@@ -204,6 +205,7 @@ const store = createStore<State>({
             displayName: user.displayName,
             photoUrl: user.photoURL
           });
+          commit("initializePrivateFirebaseListeners");
           // commit("initializeFirebaseListeners");
           router.push({ name: "private-checklists" });
         }

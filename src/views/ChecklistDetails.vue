@@ -31,7 +31,7 @@
           <Icon :name="'delete'" />
         </button>
         <button
-          v-else
+          v-else-if="user"
           class="primary"
           title="Join this checklist"
           @click="add(checklistDetails.id)"
@@ -142,10 +142,10 @@ export default defineComponent({
     const checklistStatus = computed(() =>
       store.state.privateChecklists.find((c) => c.id === checklistId.value) ? "private" : "public"
     );
-    const loadingChecklist = computed(
-      () =>
-        !store.state.publicFirebaseListenersInitiated ||
-        !store.state.privateFirebaseListenersInitiated
+    const loadingChecklist = computed(() =>
+      !user.value
+        ? !store.state.publicFirebaseListenersInitiated
+        : !store.state.privateFirebaseListenersInitiated
     );
 
     const checklistId = computed(() => route.params.checklistId as string);

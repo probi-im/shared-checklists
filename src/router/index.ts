@@ -37,10 +37,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/private/:checklistId",
     name: "private-checklist-details",
-    component: ChecklistDetails,
-    meta: {
-      requiresAuth: true
-    }
+    component: ChecklistDetails
   },
   {
     path: "/private",
@@ -69,10 +66,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/checklist/:checklistId",
     name: "checklist-details",
-    component: ChecklistDetails,
-    meta: {
-      requiresAuth: true
-    }
+    component: ChecklistDetails
   },
   {
     path: "/checklist",

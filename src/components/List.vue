@@ -63,7 +63,7 @@
         >
           <Icon :name="'delete'" />
         </button>
-        <button title="Join this checklist" v-else @click.prevent="add(item.id)">
+        <button title="Join this checklist" v-else-if="user" @click.prevent="add(item.id)">
           <Icon :name="'add'" />
         </button>
       </div>

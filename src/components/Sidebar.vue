@@ -6,8 +6,17 @@
     </div>
     <div class="nav">
       <template v-for="navItem in navItems">
+        <div
+          v-if="navItem.disabled || (navItem.requireAuth && !user)"
+          :key="navItem.title"
+          class="nav-item disabled"
+        >
+          <span class="icon"><Icon :name="navItem.icon" /></span>
+          {{ navItem.title }}
+          <router-link to="login">Log In</router-link>
+        </div>
         <router-link
-          v-if="!navItem.requireAuth || user"
+          v-else
           :key="navItem.title"
           class="nav-item"
           active-class="active"
@@ -16,11 +25,6 @@
           <span class="icon"><Icon :name="navItem.icon" /></span>
           {{ navItem.title }}
         </router-link>
-        <div v-else :key="navItem.title" class="nav-item disabled">
-          <span class="icon"><Icon :name="navItem.icon" /></span>
-          {{ navItem.title }}
-          <router-link to="login">Log In</router-link>
-        </div>
       </template>
     </div>
     <div class="bottom">

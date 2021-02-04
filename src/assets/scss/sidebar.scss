@@ -4,26 +4,10 @@
   display: flex;
   flex-direction: column;
 
-  .header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem 0;
-    color: hsl(244, 69%, 37%);
-    min-height: 3rem;
-    font-size: 2rem;
-    font-weight: bold;
-
-    img {
-      margin-bottom: 1rem;
-    }
-  }
-
   .nav {
     display: flex;
     flex-direction: column;
-    padding: 1rem 1.5rem;
+    padding: 1rem;
 
     .nav-item {
       padding: 0 0.8rem;
@@ -31,7 +15,6 @@
       align-items: center;
       background: #fff9;
       border-radius: 1rem;
-      margin: 0.5rem 0;
       text-decoration: none;
       color: #193199;
       font-size: 1.2rem;
@@ -75,6 +58,9 @@
       &.active {
         background-color: #fff;
       }
+    }
+    .nav-item:not(:first-child) {
+      margin-top: 1rem;
     }
   }
 

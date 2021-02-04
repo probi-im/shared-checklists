@@ -1,9 +1,5 @@
 <template>
   <div class="sidebar">
-    <div class="header">
-      <img src="@/assets/welcome_picture_alpha.png" width="150" />
-      Shared Checklists
-    </div>
     <div class="nav">
       <template v-for="navItem in navItems">
         <router-link

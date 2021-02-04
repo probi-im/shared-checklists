@@ -1,14 +1,15 @@
 <template>
-  <main>
+  <section class="sidebar">
     <Sidebar />
-    <section class="container">
-      <router-view />
-    </section>
+  </section>
+  <section class="navbar"></section>
+  <main class="content">
+    <router-view />
   </main>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, onUnmounted } from "vue";
+import { defineComponent, onUnmounted } from "vue";
 import store from "@/store";
 import Sidebar from "@/components/Sidebar.vue";
 
@@ -16,11 +17,7 @@ export default defineComponent({
   name: "App",
   components: { Sidebar },
   setup() {
-    onMounted(() => {
-      // console.log("app setup mounted");
-    });
     onUnmounted(() => {
-      // console.log("app setup onunmounted");
       store.commit("stopFirebaseListeners");
     });
   },
@@ -28,44 +25,49 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+@import "@/assets/scss/reset.scss";
 @import "@/assets/scss/constants.scss";
-*,
-*::before,
-*::after {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-}
 
+$navbar-height: 4rem;
+$sidebar-width: 20rem;
+
+* {
+  font-family: "Roboto", sans-serif;
+}
 html,
-body {
+body,
+#app {
   height: 100vh;
 }
 
 body {
-  background: $default-gradient;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: $accent-color;
 }
 
-main {
-  display: flex;
-  background: $transparent-gradient;
-  backdrop-filter: blur(1rem);
-  border-radius: 2rem;
-  min-width: 1200px;
-  width: 1200px;
-  min-height: 700px;
-  height: 700px;
-  border: 1px solid #fffb;
-
-  .container {
-    flex: 1;
-    // padding: 3rem;
-    // overflow: auto;
-  }
+.navbar {
+  position: fixed;
+  z-index: 2021;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $navbar-height;
+  background-color: $primary-color;
+}
+.sidebar {
+  position: fixed;
+  z-index: 2021;
+  top: $navbar-height;
+  bottom: 0;
+  left: 0;
+  width: $sidebar-width;
+  background-color: $secondary-color;
+}
+.content {
+  height: 100%;
+  padding: $navbar-height 0 0 $sidebar-width;
+}
+.container {
+  padding: 3rem;
 }
 
 button.custom-button {
@@ -126,18 +128,18 @@ button.custom-button {
 //   }
 // }
 
-@media (max-width: 700px) {
-  #app {
-    width: 90vw;
-    padding: 25px;
-  }
-  .header {
-    flex-direction: column;
-    text-align: center;
+// @media (max-width: 700px) {
+//   #app {
+//     width: 90vw;
+//     padding: 25px;
+//   }
+//   .header {
+//     flex-direction: column;
+//     text-align: center;
 
-    .buttons {
-      margin-top: 15px;
-    }
-  }
-}
+//     .buttons {
+//       margin-top: 15px;
+//     }
+//   }
+// }
 </style>

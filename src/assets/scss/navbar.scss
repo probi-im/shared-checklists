@@ -1,0 +1,32 @@
+.navbar {
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .brand {
+    font-size: 2rem;
+    color: white;
+  }
+
+  .nav {
+    .nav-item {
+      font-size: 1.3rem;
+      color: white;
+      padding: 0.3rem 0.7rem;
+      border: 2px solid #fff9;
+      border-radius: 0.5rem;
+      transition: 0.15s border ease;
+    }
+    .nav-item.router-link-active {
+      border-color: white;
+    }
+    .nav-item:hover {
+      border-color: white;
+      cursor: pointer;
+    }
+    .nav-item:not(:first-child) {
+      margin-left: 1rem;
+    }
+  }
+}

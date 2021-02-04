@@ -2,7 +2,9 @@
   <section class="sidebar">
     <Sidebar />
   </section>
-  <section class="navbar"></section>
+  <section class="navbar">
+    <Navbar />
+  </section>
   <main class="content">
     <router-view />
   </main>
@@ -11,11 +13,12 @@
 <script lang="ts">
 import { defineComponent, onUnmounted } from "vue";
 import store from "@/store";
+import Navbar from "@/components/Navbar.vue";
 import Sidebar from "@/components/Sidebar.vue";
 
 export default defineComponent({
   name: "App",
-  components: { Sidebar },
+  components: { Navbar, Sidebar },
   setup() {
     onUnmounted(() => {
       store.commit("stopFirebaseListeners");

@@ -1,9 +1,7 @@
 <template>
   <div v-if="loadingChecklists" class="loading">Loading checklists...</div>
   <div v-else class="private-checklists">
-    <div class="header">
-      <div class="title">Private Checklists</div>
-    </div>
+    <Header :title="'Private Checklists'" />
     <div class="search">
       <CustomInput :placeholder="'Search (name, description, ID)'" v-model.trim="searchQuery" />
     </div>
@@ -17,9 +15,7 @@
         <Icon :name="'add'" />
       </button>
     </form>
-    <div class="content">
-      <List :items="filteredChecklists" :toRouteName="'checklist-details'" :from="'private'" />
-    </div>
+    <List :items="filteredChecklists" :toRouteName="'checklist-details'" :from="'private'" />
   </div>
 </template>
 
@@ -32,11 +28,13 @@ import List from "@/components/List.vue";
 import { Checklist } from "@/models/checklist";
 import { joinChecklist } from "@/services/checklistService";
 import Icon from "@/components/Icon.vue";
+import Header from "@/components/Header.vue";
 
 export default defineComponent({
   name: "Private Checklists",
   components: {
     CustomInput,
+    Header,
     Icon,
     List,
   },
@@ -84,7 +82,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/header.scss";
+@import "@/assets/scss/constants.scss";
 
 .private-checklists {
   height: 100%;
@@ -125,10 +123,6 @@ export default defineComponent({
         opacity: 0.7;
       }
     }
-  }
-  .content {
-    flex: 1;
-    overflow: auto;
   }
 }
 </style>

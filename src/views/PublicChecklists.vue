@@ -1,15 +1,11 @@
 <template>
   <div v-if="loadingChecklists" class="loading">Loading checklists...</div>
   <div v-else class="public-checklists">
-    <div class="header">
-      <div class="title">Public Checklists</div>
-    </div>
+    <Header :title="'Public Checklists'" />
     <div class="search">
       <CustomInput :placeholder="'Search (name, description, ID)'" v-model.trim="searchQuery" />
     </div>
-    <div class="content">
-      <List :items="filteredChecklists" :toRouteName="'checklist-details'" :from="'public'" />
-    </div>
+    <List :items="filteredChecklists" :toRouteName="'checklist-details'" :from="'public'" />
   </div>
 </template>
 
@@ -19,11 +15,13 @@ import List from "@/components/List.vue";
 import CustomInput from "@/components/CustomInput.vue";
 import { useStore } from "vuex";
 import { State } from "@/store";
+import Header from "@/components/Header.vue";
 
 export default defineComponent({
   name: "Public Checklists",
   components: {
     CustomInput,
+    Header,
     List,
   },
   setup() {
@@ -57,8 +55,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/header.scss";
-
 .public-checklists {
   height: 100%;
   display: flex;
@@ -67,11 +63,6 @@ export default defineComponent({
   .search {
     margin-top: 1rem;
     padding: 0 1rem;
-  }
-
-  .content {
-    flex: 1;
-    overflow: auto;
   }
 }
 </style>

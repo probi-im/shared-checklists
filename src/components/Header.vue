@@ -4,7 +4,7 @@
     <button v-if="leadingIcon" class="leading-button" @click="$router.back()">
       <Icon :name="leadingIconName" />
     </button>
-    <button v-if="trailingIconName !== ''" class="trailing-button">
+    <button v-if="trailingIconName !== ''" class="trailing-button" @click="trailingAction">
       <Icon :name="trailingIconName" />
     </button>
   </div>
@@ -48,7 +48,6 @@ export default defineComponent({
       default: () => {},
     },
   },
-  // setup(props) {},
 });
 </script>
 

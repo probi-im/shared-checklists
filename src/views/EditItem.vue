@@ -1,18 +1,11 @@
 <template>
   <div v-if="loadingItem || !baseChecklist" class="loading">Loading item details...</div>
   <div v-else class="edit-item">
-    <div class="header">
-      <div class="leading">
-        <button class="back-button" @click="goBack"><Icon :name="'arrow'" /></button>
-      </div>
-      <div class="title">Edit the item</div>
-    </div>
-    <div class="content">
-      <form @submit.prevent="update">
-        <CustomInput :placeholder="'Item name'" v-model.trim="item.text" required />
-        <button type="submit"><span>Update</span></button>
-      </form>
-    </div>
+    <Header :title="'Edit the item'" :leadingIcon="true" />
+    <form @submit.prevent="update">
+      <CustomInput :placeholder="'Item name'" v-model.trim="item.text" required />
+      <button type="submit"><span>Update</span></button>
+    </form>
   </div>
 </template>
 
@@ -26,10 +19,11 @@ import CustomInput from "@/components/CustomInput.vue";
 import { Checklist } from "@/models/checklist";
 import { Item } from "@/models/item";
 import Icon from "@/components/Icon.vue";
+import Header from "@/components/Header.vue";
 
 export default defineComponent({
   name: "Edit Item",
-  components: { CustomInput, Icon },
+  components: { CustomInput, Header, Icon },
   setup() {
     const store = useStore<State>();
     const router = useRouter();
@@ -82,38 +76,32 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/scss/header.scss";
-
 .edit-item {
-  .content {
+  form {
+    margin: 2rem auto 0;
+    width: 100%;
+    max-width: 60%;
     display: flex;
-    justify-content: center;
-    form {
-      margin-top: 25px;
-      width: 100%;
-      max-width: 60%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    flex-direction: column;
+    align-items: center;
 
-      button {
-        margin: 2rem 0;
-        padding: 0.8rem 1rem;
-        font-size: 1.3rem;
-        font-weight: bold;
-        text-transform: uppercase;
-        width: auto;
-        color: white;
-        border: none;
-        border-radius: 0.8rem;
-        cursor: pointer;
-        outline: none;
-        background: linear-gradient(to bottom left, #00aeff, #67bacf);
-        transition: 0.15s opacity ease;
+    button {
+      margin: 2rem 0;
+      padding: 0.8rem 1rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      width: auto;
+      color: white;
+      border: none;
+      border-radius: 0.8rem;
+      cursor: pointer;
+      outline: none;
+      background: linear-gradient(to bottom left, #00aeff, #67bacf);
+      transition: 0.15s opacity ease;
 
-        &:hover {
-          opacity: 0.7;
-        }
+      &:hover {
+        opacity: 0.7;
       }
     }
   }

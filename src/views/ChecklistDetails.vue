@@ -3,7 +3,29 @@
     Loading checklist details...
   </div>
   <div v-else class="checklist-details">
-    <div class="header">
+    <Header
+      :title="checklistDetails.name"
+      :leadingIcon="true"
+      :trailingIconName="
+        user && user.id === checklistDetails.createdBy
+          ? 'trash'
+          : user && checklistDetails.allowedUsers.includes(user.id)
+          ? 'delete'
+          : user
+          ? 'add'
+          : ''
+      "
+      :trailingAction="
+        user && user.id === checklistDetails.createdBy
+          ? () => del(checklistDetails.id)
+          : user && checklistDetails.allowedUsers.includes(user.id)
+          ? () => leave(checklistDetails.id)
+          : user
+          ? () => add(checklistDetails.id)
+          : () => {}
+      "
+    />
+    <!-- <div class="header">
       <div class="leading">
         <button class="back-button" @click="goBack"><Icon :name="'arrow'" /></button>
       </div>
@@ -39,7 +61,7 @@
           <Icon :name="'add'" />
         </button>
       </div>
-    </div>
+    </div> -->
     <div class="search">
       <CustomInput :placeholder="'Search'" v-model.trim="searchQuery" />
     </div>
@@ -53,55 +75,51 @@
         <Icon :name="'add'" />
       </button>
     </form>
-    <div class="content">
-      <transition-group name="list" class="list" tag="div">
-        <div
-          class="list-item"
-          v-for="item in filteredItems"
-          :key="item.id"
-          :class="{
-            done: item.done,
-            locked: !user || !checklistDetails.allowedUsers.includes(user.id),
-          }"
-          @click="
-            user && checklistDetails.allowedUsers.includes(user.id) ? toggleItem(item.id) : ''
-          "
-        >
-          <div class="stats">
-            <Icon v-if="item.done" :name="'circle_checkbox_filled'" />
-            <Icon v-else :name="'circle_checkbox_empty'" />
-          </div>
-          <div class="infos">
-            <div class="title">{{ item.title || item.text }}</div>
-            <div class="subtitle">
-              {{ formattedDate(item.createdOn.seconds * 1000) }}
-            </div>
-          </div>
-          <div class="actions">
-            <button
-              title="Edit this item"
-              v-if="user && user.id === item.createdBy"
-              @click.stop="
-                $router.push({
-                  name: 'edit-item',
-                  params: { checklistId: checklistDetails.id, itemId: item.id },
-                })
-              "
-            >
-              <Icon :name="'edit'" />
-            </button>
-            <button
-              v-if="user && checklistDetails.allowedUsers.includes(user.id)"
-              title="Delete this item"
-              @click.stop="delItem(item.id)"
-              class="warn"
-            >
-              <Icon :name="'trash'" />
-            </button>
+    <transition-group name="list" class="list" tag="div">
+      <div
+        class="list-item"
+        v-for="item in filteredItems"
+        :key="item.id"
+        :class="{
+          done: item.done,
+          locked: !user || !checklistDetails.allowedUsers.includes(user.id),
+        }"
+        @click="user && checklistDetails.allowedUsers.includes(user.id) ? toggleItem(item.id) : ''"
+      >
+        <div class="stats">
+          <Icon v-if="item.done" :name="'circle_checkbox_filled'" />
+          <Icon v-else :name="'circle_checkbox_empty'" />
+        </div>
+        <div class="infos">
+          <div class="title">{{ item.title || item.text }}</div>
+          <div class="subtitle">
+            {{ formattedDate(item.createdOn.seconds * 1000) }}
           </div>
         </div>
-      </transition-group>
-    </div>
+        <div class="actions">
+          <button
+            title="Edit this item"
+            v-if="user && user.id === item.createdBy"
+            @click.stop="
+              $router.push({
+                name: 'edit-item',
+                params: { checklistId: checklistDetails.id, itemId: item.id },
+              })
+            "
+          >
+            <Icon :name="'edit'" />
+          </button>
+          <button
+            v-if="user && checklistDetails.allowedUsers.includes(user.id)"
+            title="Delete this item"
+            @click.stop="delItem(item.id)"
+            class="warn"
+          >
+            <Icon :name="'trash'" />
+          </button>
+        </div>
+      </div>
+    </transition-group>
   </div>
 </template>
 
@@ -123,11 +141,13 @@ import { useStore } from "vuex";
 import { State } from "@/store";
 import CustomInput from "@/components/CustomInput.vue";
 import { v4 as uuid4 } from "uuid";
+import Header from "@/components/Header.vue";
 
 export default defineComponent({
   name: "ChecklistDetails",
   components: {
     CustomInput,
+    Header,
     Icon,
   },
   setup() {
@@ -189,10 +209,15 @@ export default defineComponent({
       router.push({ name: returnUrl.value });
     };
 
-    const del = async (checklistId: string) => {
+    const del = (checklistId: string) => {
       if (!user.value) return;
-      await deleteChecklist(checklistId);
-      goBack();
+      deleteChecklist(checklistId)
+        .then(() => {
+          goBack();
+        })
+        .catch((e) => {
+          console.error(e);
+        });
     };
 
     const leave = async (checklistId: string) => {
@@ -283,24 +308,24 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "@/assets/scss/constants.scss";
-@import "@/assets/scss/header.scss";
+// @import "@/assets/scss/header.scss";
 
 .checklist-details {
   height: 100%;
-  display: flex;
-  flex-direction: column;
+  // display: flex;
+  // flex-direction: column;
 
-  .header .actions {
-    button {
-      &.primary svg {
-        fill: blue;
-      }
+  // .header .actions {
+  //   button {
+  //     &.primary svg {
+  //       fill: blue;
+  //     }
 
-      &.warn svg {
-        fill: red;
-      }
-    }
-  }
+  //     &.warn svg {
+  //       fill: red;
+  //     }
+  //   }
+  // }
 
   .search {
     margin-top: 1rem;
@@ -338,106 +363,100 @@ export default defineComponent({
       }
     }
   }
-  .content {
-    flex: 1;
-    overflow: auto;
-    display: flex;
-    flex-direction: column;
 
-    .list {
+  .list {
+    padding: 1rem;
+    position: relative;
+
+    .list-item {
+      display: block;
+      text-decoration: none;
+      width: 100%;
+      background: linear-gradient(to top right, #fff7, #fffc);
+      border-radius: 1rem;
       padding: 1rem;
-      position: relative;
+      display: flex;
+      align-items: center;
 
-      .list-item {
-        display: block;
-        text-decoration: none;
-        width: 100%;
-        background: linear-gradient(to top right, #fff7, #fffc);
-        border-radius: 1rem;
-        padding: 1rem;
-        display: flex;
+      .stats {
+        svg {
+          fill: #555;
+        }
+      }
+
+      .infos {
+        margin-left: 1rem;
+        color: black;
+        .title {
+          font-size: 1.5rem;
+        }
+        .subtitle {
+          color: grey;
+          margin-top: 0.3rem;
+        }
+      }
+
+      .actions {
+        margin-left: auto;
+        display: none;
+        opacity: 0;
         align-items: center;
 
-        .stats {
-          svg {
-            fill: #555;
-          }
-        }
+        button {
+          background: none;
+          border: none;
+          cursor: pointer;
+          outline: none;
 
-        .infos {
-          margin-left: 1rem;
-          color: black;
-          .title {
-            font-size: 1.5rem;
+          svg {
+            fill: darkgrey;
           }
-          .subtitle {
-            color: grey;
-            margin-top: 0.3rem;
+
+          &:hover {
+            svg {
+              fill: blue;
+            }
+            &.warn {
+              svg {
+                fill: red;
+              }
+            }
+          }
+          &:not(:last-child) {
+            margin-right: 1rem;
           }
         }
+      }
+
+      &.done {
+        background: linear-gradient(to top right, #fff5, #fff8);
+        opacity: 0.7;
+      }
+
+      &:not(.locked):hover {
+        cursor: pointer;
+        box-shadow: 0 0 10px #fff;
 
         .actions {
-          margin-left: auto;
-          display: none;
-          opacity: 0;
-          align-items: center;
-
-          button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            outline: none;
-
-            svg {
-              fill: darkgrey;
-            }
-
-            &:hover {
-              svg {
-                fill: blue;
-              }
-              &.warn {
-                svg {
-                  fill: red;
-                }
-              }
-            }
-            &:not(:last-child) {
-              margin-right: 1rem;
-            }
-          }
-        }
-
-        &.done {
-          background: linear-gradient(to top right, #fff5, #fff8);
-          opacity: 0.7;
-        }
-
-        &:not(.locked):hover {
-          cursor: pointer;
-          box-shadow: 0 0 10px #fff;
-
-          .actions {
-            display: flex;
-            opacity: 1;
-          }
-        }
-
-        &:not(:last-child) {
-          margin-bottom: 1rem;
+          display: flex;
+          opacity: 1;
         }
       }
 
-      .list-enter-active,
-      .list-leave-active,
-      .list-move {
-        transition: 0.3s all ease;
+      &:not(:last-child) {
+        margin-bottom: 1rem;
       }
-      .list-enter-from,
-      .list-leave-to {
-        opacity: 0;
-        transform: scale(0.5);
-      }
+    }
+
+    .list-enter-active,
+    .list-leave-active,
+    .list-move {
+      transition: 0.3s all ease;
+    }
+    .list-enter-from,
+    .list-leave-to {
+      opacity: 0;
+      transform: scale(0.5);
     }
   }
 }

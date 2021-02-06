@@ -5,6 +5,20 @@
     letter-spacing: 1px;
     font-weight: bold;
     position: relative;
+    display: flex;
+    align-items: center;
+
+    a {
+      margin-left: 2rem;
+      font-size: 1.2rem;
+      padding: 0.3rem 0.7rem;
+      border: 2px solid lightblue;
+      border-radius: 1rem;
+      transition: 0.15s background ease;
+    }
+    a:hover {
+      background-color: #fff3;
+    }
   }
   .separator {
     height: 0.35rem;

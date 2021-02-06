@@ -3,7 +3,10 @@
     <Header :title="'Home'" :leadingIcon="false" />
     <div class="container">
       <div class="section">
-        <div class="title">Your Private Checklists</div>
+        <div class="title">
+          Your Checklists
+          <router-link :to="{ name: 'private-checklists' }">View all</router-link>
+        </div>
         <div class="separator"></div>
         <div class="list">
           <button class="item">Shopping</button>
@@ -15,7 +18,10 @@
         </div>
       </div>
       <div class="section">
-        <div class="title">Popular Public Checklists</div>
+        <div class="title">
+          Popular Public Checklists
+          <router-link :to="{ name: 'public-checklists' }">View all</router-link>
+        </div>
         <div class="separator"></div>
         <div class="list">
           <button class="item">Shopping</button>

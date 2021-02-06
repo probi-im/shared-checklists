@@ -58,6 +58,10 @@ body,
   max-height: 100%;
 }
 
+html {
+  overflow-y: scroll;
+}
+
 body {
   background-color: $dark-bg;
 }
@@ -130,10 +134,6 @@ body {
   max-height: 100%;
   padding-bottom: $navbar-height;
   transition: 0.15s transform ease;
-
-  // &.sidebarOpened {
-  //   padding-left: $sidebar-width;
-  // }
 }
 .container {
   padding: 3rem;
@@ -184,18 +184,6 @@ button.custom-button {
     }
   }
 }
-// input[type="text"].custom-input {
-//   width: 100%;
-//   padding: 10px 15px;
-//   border: 2px solid lightgray;
-//   border-radius: 10px;
-//   outline: none;
-//   font-size: 1.2rem;
-
-//   &:focus {
-//     border-color: gray;
-//   }
-// }
 
 // @media (max-width: 700px) {
 //   .navbar-section {

@@ -5,7 +5,7 @@
   <div class="backdrop" @click="closeSidebar"></div>
   <nav class="navbar-section">
     <Navbar />
-    <button class="toggler" @click="toggleSidebar">
+    <button class="toggler" :class="{ sidebarOpened }" @click="toggleSidebar">
       <Icon :name="sidebarOpened ? 'delete' : 'menu'" />
     </button>
   </nav>
@@ -94,7 +94,7 @@ body {
     background: none;
     border: none;
     border-radius: 2rem;
-    transition: 0.15s background ease;
+    transition: 0.15s background ease, 0.25s transform ease;
     width: 4rem;
     height: 4rem;
     display: grid;
@@ -109,6 +109,9 @@ body {
   .toggler:hover {
     cursor: pointer;
   }
+  .toggler.sidebarOpened {
+    transform: rotate(-90deg);
+  }
 }
 .sidebar-section {
   position: fixed;
@@ -120,6 +123,8 @@ body {
   background-color: $accent-color;
   transform: translateX(100%);
   transition: 0.15s transform ease;
+  display: flex;
+  flex-direction: column;
 
   &.opened {
     transform: translateX(0);

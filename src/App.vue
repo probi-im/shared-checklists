@@ -131,7 +131,6 @@ body {
 }
 .content-section {
   min-height: 100%;
-  max-height: 100%;
   padding-bottom: $navbar-height;
   transition: 0.15s transform ease;
 }

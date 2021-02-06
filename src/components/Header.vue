@@ -73,7 +73,7 @@ $button-spacing: ($header-height - $button-size) / 2;
     justify-content: center;
   }
 
-  &:not(.leadingIcon) {
+  &:not(.leadingIcon):not(.centerText) {
     padding-left: 1.5rem;
   }
 

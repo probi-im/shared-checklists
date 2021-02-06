@@ -1,28 +1,42 @@
 <template>
-  <section class="sidebar">
+  <aside class="sidebar-section" :class="{ opened: sidebarOpened }">
     <Sidebar />
-  </section>
-  <section class="navbar">
+  </aside>
+  <div class="backdrop" @click="closeSidebar"></div>
+  <nav class="navbar-section">
     <Navbar />
-  </section>
-  <main class="content">
+    <button class="toggler" @click="toggleSidebar">
+      <Icon :name="sidebarOpened ? 'delete' : 'menu'" />
+    </button>
+  </nav>
+  <main class="content-section" :class="{ sidebarOpened }">
     <router-view />
   </main>
 </template>
 
 <script lang="ts">
-import { defineComponent, onUnmounted } from "vue";
+import { defineComponent, onUnmounted, ref } from "vue";
 import store from "@/store";
 import Navbar from "@/components/Navbar.vue";
 import Sidebar from "@/components/Sidebar.vue";
+import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
   name: "App",
-  components: { Navbar, Sidebar },
+  components: { Icon, Navbar, Sidebar },
   setup() {
+    const sidebarOpened = ref(false);
+    const closeSidebar = () => {
+      sidebarOpened.value = false;
+    };
+    const toggleSidebar = () => {
+      sidebarOpened.value = !sidebarOpened.value;
+    };
     onUnmounted(() => {
       store.commit("stopFirebaseListeners");
     });
+
+    return { closeSidebar, sidebarOpened, toggleSidebar };
   },
 });
 </script>
@@ -40,34 +54,86 @@ $sidebar-width: 20rem;
 html,
 body,
 #app {
-  height: 100vh;
+  height: 100%;
+  max-height: 100%;
 }
 
 body {
-  background-color: $accent-color;
+  background-color: $dark-bg;
 }
 
-.navbar {
+.backdrop {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  opacity: 0;
+  background: #0007;
+  z-index: 2020;
+  transition: 0.15s opacity ease;
+  transform: translateX(100%);
+  cursor: pointer;
+}
+
+.navbar-section {
   position: fixed;
   z-index: 2021;
-  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
   height: $navbar-height;
   background-color: $primary-color;
+  display: flex;
+
+  .toggler {
+    background: none;
+    border: none;
+    border-radius: 2rem;
+    transition: 0.15s background ease;
+    width: 4rem;
+    height: 4rem;
+    display: grid;
+    place-content: center;
+
+    svg {
+      fill: white;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+  .toggler:hover {
+    cursor: pointer;
+  }
 }
-.sidebar {
+.sidebar-section {
   position: fixed;
   z-index: 2021;
-  top: $navbar-height;
-  bottom: 0;
-  left: 0;
+  top: 0;
+  bottom: $navbar-height;
+  right: 0;
   width: $sidebar-width;
-  background-color: $secondary-color;
+  background-color: $accent-color;
+  transform: translateX(100%);
+  transition: 0.15s transform ease;
+
+  &.opened {
+    transform: translateX(0);
+  }
 }
-.content {
-  height: 100%;
-  padding: $navbar-height 0 0 $sidebar-width;
+.sidebar-section.opened ~ .backdrop {
+  opacity: 1;
+  transform: translateX(0);
+}
+.content-section {
+  min-height: 100%;
+  max-height: 100%;
+  padding-bottom: $navbar-height;
+  transition: 0.15s transform ease;
+
+  // &.sidebarOpened {
+  //   padding-left: $sidebar-width;
+  // }
 }
 .container {
   padding: 3rem;
@@ -132,16 +198,18 @@ button.custom-button {
 // }
 
 // @media (max-width: 700px) {
-//   #app {
-//     width: 90vw;
-//     padding: 25px;
+//   .navbar-section {
+//     .toggler {
+//       display: grid;
+//     }
 //   }
-//   .header {
-//     flex-direction: column;
-//     text-align: center;
-
-//     .buttons {
-//       margin-top: 15px;
+//   .sidebar-section {
+//     transform: translateX(-100%);
+//   }
+//   .content-section {
+//     &.sidebarOpened {
+//       padding-left: 0;
+//       transform: translateX($sidebar-width);
 //     }
 //   }
 // }

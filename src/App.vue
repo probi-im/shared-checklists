@@ -120,7 +120,7 @@ body {
   bottom: $navbar-height;
   right: 0;
   width: $sidebar-width;
-  background-color: $accent-color;
+  background: #222;
   transform: translateX(100%);
   transition: 0.15s transform ease;
   display: flex;

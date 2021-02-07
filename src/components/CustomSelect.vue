@@ -39,7 +39,7 @@ select.custom-select {
   border: none;
   border-radius: 2rem;
   font-size: 1.2rem;
-  background: linear-gradient(to right bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3));
+  background: white;
   outline: none;
 
   &:focus {

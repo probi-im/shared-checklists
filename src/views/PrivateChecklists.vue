@@ -97,7 +97,7 @@ export default defineComponent({
     margin: 1rem 1rem 0;
     padding: 1rem;
     display: flex;
-    background: #fff5;
+    background: $accent-color;
     border-radius: 1rem;
 
     button {
@@ -112,11 +112,11 @@ export default defineComponent({
       border-radius: 0.8rem;
       cursor: pointer;
       outline: none;
-      background: $accent-gradient;
+      background: white;
       transition: 0.15s opacity ease;
 
       svg {
-        fill: white;
+        fill: black;
       }
 
       &:hover {

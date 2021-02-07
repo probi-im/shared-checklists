@@ -145,13 +145,14 @@ export default defineComponent({
   .list-item {
     text-decoration: none;
     width: 100%;
-    background: linear-gradient(to top right, #fff7, #fffc);
+    background: white;
     border-radius: 1rem;
     padding: 0 1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     height: 5rem;
+    transition: 0.15s box-shadow ease;
 
     .flags {
       margin-right: 0.6rem;
@@ -168,6 +169,7 @@ export default defineComponent({
 
     .infos {
       color: black;
+      margin-right: auto;
       .title {
         font-size: 1.5rem;
       }
@@ -178,10 +180,11 @@ export default defineComponent({
     }
 
     .actions {
-      margin-left: auto;
-      display: none;
+      margin-right: 0.8rem;
+      display: flex;
       opacity: 0;
       align-items: center;
+      transition: 0.15s opacity ease;
 
       button {
         background: none;
@@ -209,7 +212,6 @@ export default defineComponent({
     }
 
     .stats {
-      margin-left: auto;
       display: flex;
       align-items: center;
       background: #fff;
@@ -233,11 +235,8 @@ export default defineComponent({
     &:hover {
       box-shadow: 0 0 10px #fff;
       .actions {
-        display: flex;
+        // display: flex;
         opacity: 1;
-      }
-      .stats {
-        margin-left: 0.8rem;
       }
     }
     &:not(:last-child) {

@@ -336,7 +336,7 @@ export default defineComponent({
     margin: 1rem 1rem 0;
     padding: 1rem;
     display: flex;
-    background: #fff5;
+    background: $accent-color;
     border-radius: 1rem;
 
     button {
@@ -346,16 +346,15 @@ export default defineComponent({
       font-weight: bold;
       text-transform: uppercase;
       width: auto;
-      color: white;
       border: none;
       border-radius: 0.8rem;
       cursor: pointer;
       outline: none;
-      background: $accent-gradient;
+      background: white;
       transition: 0.15s opacity ease;
 
       svg {
-        fill: white;
+        fill: black;
       }
 
       &:hover {
@@ -372,11 +371,13 @@ export default defineComponent({
       display: block;
       text-decoration: none;
       width: 100%;
-      background: linear-gradient(to top right, #fff7, #fffc);
+      // background: linear-gradient(to top right, #fff7, #fffc);
+      background: white;
       border-radius: 1rem;
       padding: 1rem;
       display: flex;
       align-items: center;
+      transition: 0.15s box-shadow ease;
 
       .stats {
         svg {
@@ -398,9 +399,10 @@ export default defineComponent({
 
       .actions {
         margin-left: auto;
-        display: none;
+        display: flex;
         opacity: 0;
         align-items: center;
+        transition: 0.15s opacity ease;
 
         button {
           background: none;
@@ -438,7 +440,6 @@ export default defineComponent({
         box-shadow: 0 0 10px #fff;
 
         .actions {
-          display: flex;
           opacity: 1;
         }
       }

@@ -16,10 +16,11 @@
         <Icon :name="'about'" class="icon" />
         <span class="label">About</span>
       </router-link>
-      <router-link to="login" class="nav-item">
+      <a href="https://github.com" target="_blank" class="nav-item external-link">
         <Icon :name="'github'" class="icon" />
         <span class="label">GitHub</span>
-      </router-link>
+        <Icon :name="'blank_open'" class="icon small" />
+      </a>
     </div>
   </div>
 </template>

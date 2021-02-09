@@ -9,23 +9,6 @@
         :to="navItem.to"
         :requireLogin="!navItem.disabled && navItem.requireAuth && !user"
       />
-      <!-- <template v-for="navItem in navItems">
-        <router-link
-          v-if="!navItem.disabled && (!navItem.requireAuth || user)"
-          :key="navItem.title"
-          class="nav-item"
-          active-class="active"
-          :to="navItem.to"
-        >
-          <span class="icon"><Icon :name="navItem.icon" /></span>
-          {{ navItem.title }}
-        </router-link>
-        <div v-else-if="!navItem.disabled" :key="navItem.title" class="nav-item disabled">
-          <span class="icon"><Icon :name="navItem.icon" /></span>
-          {{ navItem.title }}
-          <router-link to="login">Log In</router-link>
-        </div>
-      </template> -->
     </div>
     <div class="bottom">
       <router-link v-if="!user" to="login">

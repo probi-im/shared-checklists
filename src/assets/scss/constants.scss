@@ -27,10 +27,6 @@ $header-text-color: rgba(
   $alpha: 0.7
 );
 
-$on-background-color: #ddd;
-$on-primary-color: white;
-$on-secondary-color: white;
-
 // background colors
 $background-color: #121212;
 $background-color-00dp: $background-color;
@@ -46,7 +42,15 @@ $background-color-24dp: #373737;
 
 $overlay-color: white;
 
-$text-disabled-color: rgba($on-background-color, 38%);
+// texts
+$on-background-color: rgba(white, 87%);
+$on-primary-color: white;
+$on-secondary-color: white;
+
+$dark-text-color: rgba(white, 87%);
+$dark-secondary-text-color: rgba(white, 60%);
+$dark-disabled-text-color: rgba($dark-text-color, 38%);
+$dark-disabled-secondary-text-color: rgba($dark-secondary-text-color, 38%);
 
 // borders
 $dark-border-color: #888;

@@ -118,6 +118,7 @@
             <Icon :name="'trash'" />
           </button>
         </div>
+        <div class="overlay"></div>
       </div>
     </transition-group>
   </div>
@@ -308,24 +309,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 @import "@/assets/scss/constants.scss";
-// @import "@/assets/scss/header.scss";
 
 .checklist-details {
   height: 100%;
-  // display: flex;
-  // flex-direction: column;
-
-  // .header .actions {
-  //   button {
-  //     &.primary svg {
-  //       fill: blue;
-  //     }
-
-  //     &.warn svg {
-  //       fill: red;
-  //     }
-  //   }
-  // }
 
   .search {
     margin-top: 1rem;
@@ -371,28 +357,32 @@ export default defineComponent({
       display: block;
       text-decoration: none;
       width: 100%;
-      // background: linear-gradient(to top right, #fff7, #fffc);
-      background: white;
+      background: $background-color-08dp;
       border-radius: 1rem;
       padding: 1rem;
       display: flex;
       align-items: center;
       transition: 0.15s box-shadow ease;
+      position: relative;
 
       .stats {
         svg {
-          fill: #555;
+          fill: $dark-secondary-text-color;
         }
       }
 
       .infos {
         margin-left: 1rem;
-        color: black;
+        .title,
+        .subtitle {
+          transition: 0.15s color ease;
+        }
         .title {
+          color: $dark-text-color;
           font-size: 1.5rem;
         }
         .subtitle {
-          color: grey;
+          color: $dark-secondary-text-color;
           margin-top: 0.3rem;
         }
       }
@@ -416,11 +406,11 @@ export default defineComponent({
 
           &:hover {
             svg {
-              fill: blue;
+              fill: lightblue;
             }
             &.warn {
               svg {
-                fill: red;
+                fill: salmon;
               }
             }
           }
@@ -430,14 +420,36 @@ export default defineComponent({
         }
       }
 
+      .overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        content: "";
+        background: $overlay-color;
+        opacity: 0;
+        transition: 0.15s opacity ease;
+        border-radius: inherit;
+        pointer-events: none;
+      }
+
       &.done {
-        background: linear-gradient(to top right, #fff5, #fff8);
-        opacity: 0.7;
+        .title {
+          color: $dark-disabled-text-color;
+        }
+
+        .subtitle {
+          color: $dark-disabled-secondary-text-color;
+        }
+
+        .overlay {
+          opacity: 0.12;
+        }
       }
 
       &:not(.locked):hover {
         cursor: pointer;
-        box-shadow: 0 0 10px #fff;
 
         .actions {
           opacity: 1;

@@ -94,11 +94,11 @@ export default defineComponent({
   }
 
   &.disabled {
-    color: $text-disabled-color;
+    color: $dark-disabled-text-color;
     border-color: $dark-disabled-border-color;
     .icon {
       svg {
-        fill: $text-disabled-color;
+        fill: $dark-disabled-text-color;
       }
     }
   }

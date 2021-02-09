@@ -140,12 +140,14 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/constants.scss";
+
 .list {
   padding: 1rem;
   .list-item {
     text-decoration: none;
     width: 100%;
-    background: white;
+    background: $background-color-08dp;
     border-radius: 1rem;
     padding: 0 1rem;
     cursor: pointer;
@@ -168,13 +170,13 @@ export default defineComponent({
     }
 
     .infos {
-      color: black;
       margin-right: auto;
       .title {
+        color: $dark-text-color;
         font-size: 1.5rem;
       }
       .subtitle {
-        color: grey;
+        color: $dark-secondary-text-color;
         margin-top: 0.3rem;
       }
     }
@@ -197,11 +199,11 @@ export default defineComponent({
 
         &:hover {
           svg {
-            fill: blue;
+            fill: lightblue;
           }
           &.warn {
             svg {
-              fill: red;
+              fill: salmon;
             }
           }
         }
@@ -233,7 +235,7 @@ export default defineComponent({
     }
 
     &:hover {
-      box-shadow: 0 0 10px #fff;
+      // box-shadow: 0 0 10px #fff;
       .actions {
         // display: flex;
         opacity: 1;

@@ -189,21 +189,4 @@ button.custom-button {
     }
   }
 }
-
-// @media (max-width: 700px) {
-//   .navbar-section {
-//     .toggler {
-//       display: grid;
-//     }
-//   }
-//   .sidebar-section {
-//     transform: translateX(-100%);
-//   }
-//   .content-section {
-//     &.sidebarOpened {
-//       padding-left: 0;
-//       transform: translateX($sidebar-width);
-//     }
-//   }
-// }
 </style>

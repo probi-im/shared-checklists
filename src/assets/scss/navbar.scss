@@ -62,15 +62,15 @@
       }
     }
     .nav-item:hover {
-      border-color: white;
       cursor: pointer;
+      .icon {
+        fill: white;
+      }
+      .label {
+        color: white;
+      }
       &.external-link {
-        .icon {
-          fill: white;
-        }
-        .label {
-          color: white;
-        }
+        border-color: white;
       }
     }
     .nav-item:not(:first-child) {

@@ -58,6 +58,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/constants.scss";
+
 form {
   margin: 2rem auto 0;
   width: 100%;
@@ -87,6 +89,7 @@ form {
   }
 
   h3 {
+    color: $on-background-color;
     a {
       text-decoration: none;
       color: #3d9acf;

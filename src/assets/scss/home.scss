@@ -81,6 +81,22 @@
       }
     }
   }
+  .no-user {
+    display: flex;
+    align-items: center;
+    font-size: 1.8rem;
+    color: $on-background-color;
+
+    svg {
+      fill: $on-background-color;
+      margin-right: 1rem;
+      width: 2rem;
+      height: 2rem;
+    }
+    a {
+      text-decoration: underline;
+    }
+  }
 }
 .section:not(:first-child) {
   margin-top: 4rem;

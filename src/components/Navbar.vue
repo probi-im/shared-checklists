@@ -4,17 +4,14 @@
       <span class="label">Shared Checklists</span>
     </router-link>
     <div class="nav">
-      <router-link to="home" class="nav-item home">
-        <Icon :name="'home'" class="icon" />
-        <span class="label">Home</span>
-      </router-link>
-      <router-link to="settings" class="nav-item">
-        <Icon :name="'settings'" class="icon" />
-        <span class="label">Settings</span>
-      </router-link>
-      <router-link to="about" class="nav-item">
-        <Icon :name="'about'" class="icon" />
-        <span class="label">About</span>
+      <router-link
+        v-for="navItem in navItems"
+        :key="navItem.label"
+        :to="{ name: navItem.toName }"
+        class="nav-item home"
+      >
+        <Icon :name="navItem.iconName" class="icon" />
+        <span class="label">{{ navItem.label }}</span>
       </router-link>
       <a href="https://github.com" target="_blank" class="nav-item external-link">
         <Icon :name="'github'" class="icon" />
@@ -26,12 +23,35 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
   components: {
     Icon,
+  },
+  setup() {
+    const navItems = ref([
+      {
+        label: "Home",
+        iconName: "home",
+        toName: "home",
+      },
+      {
+        label: "Settings",
+        iconName: "settings",
+        toName: "settings",
+      },
+      {
+        label: "About",
+        iconName: "about",
+        toName: "about",
+      },
+    ]);
+
+    return {
+      navItems,
+    };
   },
 });
 </script>

@@ -51,15 +51,6 @@
           </span>
         </div>
       </div>
-      <!-- <div class="section">
-        <div class="title">Recent Tasks</div>
-        <div class="separator"></div>
-        <div class="list">
-          <button class="item">Tomatoes</button>
-          <button class="item">Graphics Card</button>
-          <button class="item">Test item</button>
-        </div>
-      </div> -->
     </div>
   </div>
 </template>

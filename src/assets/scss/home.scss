@@ -1,6 +1,8 @@
+@import "@/assets/scss/constants.scss";
+
 .section {
   .title {
-    color: white;
+    color: $on-background-color;
     font-size: 2rem;
     letter-spacing: 1px;
     font-weight: bold;
@@ -23,28 +25,60 @@
   .separator {
     height: 0.35rem;
     width: 4rem;
-    background: white;
+    background: $on-background-color;
     margin: 1rem 0 2rem;
   }
   .list {
     display: flex;
     overflow: auto;
     .item {
+      width: 10rem;
+      height: 7rem;
       flex-shrink: 0;
-      border: 2px solid white;
+      border: 2px solid $dark-border-color;
       background: none;
       padding: 0.5rem 0.7rem;
-      color: white;
       font-size: 1.4rem;
       border-radius: 1rem;
-      transition: 0.15s background ease;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+
+      &-title {
+        color: $dark-text-color;
+        font-size: 1.2rem;
+      }
+      &-subtitle {
+        text-align: right;
+        margin-top: auto;
+        color: $dark-secondary-text-color;
+        font-size: 1rem;
+      }
+      .overlay {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        content: "";
+        background: $overlay-color;
+        opacity: 0;
+        transition: 0.15s opacity ease;
+      }
     }
     .item:not(:first-child) {
       margin-left: 1rem;
     }
     .item:hover {
       cursor: pointer;
-      background-color: #fff3;
+      .overlay {
+        opacity: 0.04;
+      }
+    }
+    .item:focus {
+      .overlay {
+        opacity: 0.12;
+      }
     }
   }
 }

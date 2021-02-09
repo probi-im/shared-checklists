@@ -52,14 +52,16 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/scss/constants.scss";
+
 $button-size: 2.7rem;
 $header-height: 4rem;
 $button-spacing: ($header-height - $button-size) / 2;
 .header {
   height: 4rem;
-  background: #0005;
+  background: $background-color-03dp;
   position: relative;
-  color: white;
+  color: $on-background-color;
   font-size: 2.2rem;
   display: flex;
   align-items: center;
@@ -92,7 +94,7 @@ $button-spacing: ($header-height - $button-size) / 2;
     transition: 0.15s background ease;
 
     svg {
-      fill: white;
+      fill: $on-background-color;
     }
   }
   .leading-button:hover,

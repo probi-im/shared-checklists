@@ -9,12 +9,18 @@
         </div>
         <div class="separator"></div>
         <div class="list">
-          <button class="item">Shopping</button>
-          <button class="item">Custom Checklist</button>
-          <button class="item">Shopping</button>
-          <button class="item">Custom Checklist</button>
-          <button class="item">Shopping</button>
-          <button class="item">Custom Checklist</button>
+          <router-link
+            v-for="checklist in privateChecklists"
+            :key="checklist.id"
+            class="item"
+            :to="{ name: 'checklist-details', params: { checklistId: checklist.id } }"
+          >
+            <div class="item-title">{{ checklist.name }}</div>
+            <div class="item-subtitle">
+              {{ checklist.items.length }} item{{ checklist.items.length > 1 ? "s" : "" }}
+            </div>
+            <div class="overlay"></div>
+          </router-link>
         </div>
       </div>
       <div class="section">
@@ -24,13 +30,21 @@
         </div>
         <div class="separator"></div>
         <div class="list">
-          <button class="item">Shopping</button>
-          <button class="item">Custom Checklist</button>
-          <button class="item">Shopping</button>
-          <button class="item">Custom Checklist</button>
+          <router-link
+            v-for="checklist in publicChecklists"
+            :key="checklist.id"
+            class="item"
+            :to="{ name: 'checklist-details', params: { checklistId: checklist.id } }"
+          >
+            <div class="item-title">{{ checklist.name }}</div>
+            <div class="item-subtitle">
+              {{ checklist.people }} member{{ checklist.people > 1 ? "s" : "" }}
+            </div>
+            <div class="overlay"></div>
+          </router-link>
         </div>
       </div>
-      <div class="section">
+      <!-- <div class="section">
         <div class="title">Recent Tasks</div>
         <div class="separator"></div>
         <div class="list">
@@ -38,15 +52,16 @@
           <button class="item">Graphics Card</button>
           <button class="item">Test item</button>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from "vuex";
 import Header from "@/components/Header.vue";
+import { State } from "@/store";
 
 export default defineComponent({
   name: "Home",
@@ -54,9 +69,17 @@ export default defineComponent({
     Header,
   },
   setup() {
-    const store = useStore();
+    const store = useStore<State>();
 
-    return {};
+    const publicChecklists = computed(() => store.state.publicChecklists);
+    const privateChecklists = computed(() => store.state.privateChecklists);
+
+    return {
+      publicChecklists: publicChecklists.value.sort((a, b) =>
+        a.people === b.people ? 0 : a.people < b.people ? 1 : -1
+      ),
+      privateChecklists,
+    };
   },
 });
 </script>

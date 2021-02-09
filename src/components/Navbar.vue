@@ -41,16 +41,18 @@ export default defineComponent({
         label: "Settings",
         iconName: "settings",
         toName: "settings",
+        disabled: true,
       },
       {
         label: "About",
         iconName: "about",
         toName: "about",
+        disabled: true,
       },
     ]);
 
     return {
-      navItems,
+      navItems: navItems.value.filter((i) => !i.disabled),
     };
   },
 });

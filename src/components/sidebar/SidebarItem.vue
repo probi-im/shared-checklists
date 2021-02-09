@@ -7,7 +7,10 @@
   <div v-else class="sidebar-item disabled">
     <span v-if="iconName" class="icon"><Icon :name="iconName" /></span>
     {{ label }}
-    <router-link to="login">Log In</router-link>
+    <router-link to="login"
+      >Log In
+      <div class="overlay"></div
+    ></router-link>
     <div class="overlay"></div>
   </div>
 </template>
@@ -32,8 +35,8 @@ export default defineComponent({
       default: false,
     },
     to: {
-      type: String,
-      default: "",
+      type: Object,
+      required: true,
     },
   },
   components: {
@@ -46,17 +49,16 @@ export default defineComponent({
 @import "@/assets/scss/constants.scss";
 
 .sidebar-item {
-  padding: 0 0.8rem;
+  padding: 0 1rem;
   display: flex;
   align-items: center;
   border-radius: 0.5rem;
-  // border: 1px solid white;
+  border: 2px solid $dark-border-color;
   text-decoration: none;
   color: $on-background-color;
   font-size: 1.2rem;
-  transition: 0.15s background ease;
   height: 4rem;
-  background: $background-color-08dp;
+  background: $background-color-03dp;
   position: relative;
 
   .icon {
@@ -69,24 +71,35 @@ export default defineComponent({
   a {
     font-size: 0.8rem;
     text-decoration: none;
-    color: inherit;
+    color: $on-background-color;
     border-radius: 0.5rem;
     border: none;
     padding: 0.4rem 0.5rem;
-    background: #fffb;
+    background: $background-color-24dp;
     margin-left: auto;
     cursor: pointer;
-    transition: 0.15s background ease;
     text-transform: uppercase;
+    position: relative;
 
     &:hover {
-      background-color: #fff;
+      .overlay {
+        opacity: 0.04;
+      }
+    }
+    &:focus {
+      .overlay {
+        opacity: 0.12;
+      }
     }
   }
 
   &.disabled {
-    .overlay {
-      opacity: 0.12;
+    color: $text-disabled-color;
+    border-color: $dark-disabled-border-color;
+    .icon {
+      svg {
+        fill: $text-disabled-color;
+      }
     }
   }
 
@@ -96,15 +109,14 @@ export default defineComponent({
     }
     &:hover {
       .overlay {
-        opacity: 0.4;
+        opacity: 0.04;
       }
     }
-  }
-
-  &:not(.disabled):hover,
-  &.active {
-    .overlay {
-      opacity: 0.2;
+    &:focus,
+    &.active {
+      .overlay {
+        opacity: 0.12;
+      }
     }
   }
 
@@ -118,6 +130,12 @@ export default defineComponent({
     background: $overlay-color;
     opacity: 0;
     border-radius: inherit;
+    transition: 0.15s opacity ease;
+    pointer-events: none;
+
+    &:hover {
+      opacity: 0.04;
+    }
   }
 }
 </style>

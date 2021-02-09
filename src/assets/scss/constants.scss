@@ -1,3 +1,5 @@
+@use "sass:color";
+
 $primary-color: rgb(246, 79, 89);
 $secondary-color: rgb(196, 113, 237);
 $accent-color: rgb(18, 194, 233);
@@ -25,8 +27,7 @@ $header-text-color: rgba(
   $alpha: 0.7
 );
 
-$on-background-color: white;
-$on-surface-color: white;
+$on-background-color: #ddd;
 $on-primary-color: white;
 $on-secondary-color: white;
 
@@ -44,3 +45,9 @@ $background-color-16dp: #353535;
 $background-color-24dp: #373737;
 
 $overlay-color: white;
+
+$text-disabled-color: rgba($on-background-color, 38%);
+
+// borders
+$dark-border-color: #888;
+$dark-disabled-border-color: rgba($dark-border-color, 12%);

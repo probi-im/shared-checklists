@@ -24,3 +24,23 @@ $header-text-color: rgba(
   $color: black,
   $alpha: 0.7
 );
+
+$on-background-color: white;
+$on-surface-color: white;
+$on-primary-color: white;
+$on-secondary-color: white;
+
+// background colors
+$background-color: #121212;
+$background-color-00dp: $background-color;
+$background-color-01dp: #1d1d1d;
+$background-color-02dp: #212121;
+$background-color-03dp: #242424;
+$background-color-04dp: #272727;
+$background-color-06dp: #2c2c2c;
+$background-color-08dp: #2d2d2d;
+$background-color-12dp: #323232;
+$background-color-16dp: #353535;
+$background-color-24dp: #373737;
+
+$overlay-color: white;

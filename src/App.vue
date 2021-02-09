@@ -18,7 +18,7 @@
 import { defineComponent, onUnmounted, ref } from "vue";
 import store from "@/store";
 import Navbar from "@/components/Navbar.vue";
-import Sidebar from "@/components/Sidebar.vue";
+import Sidebar from "@/components/sidebar/Sidebar.vue";
 import Icon from "@/components/Icon.vue";
 
 export default defineComponent({
@@ -63,7 +63,7 @@ html {
 }
 
 body {
-  background-color: $dark-bg;
+  background-color: $background-color;
 }
 
 .backdrop {
@@ -120,7 +120,8 @@ body {
   bottom: $navbar-height;
   right: 0;
   width: $sidebar-width;
-  background: #222;
+  // background: #222;
+  background: $background-color-01dp;
   transform: translateX(100%);
   transition: 0.15s transform ease;
   display: flex;
